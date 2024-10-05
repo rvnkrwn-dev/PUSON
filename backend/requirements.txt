@@ -1,6 +1,10 @@
-Flask==2.3.2
-python-dotenv==1.0.0
-PyMySQL==1.0.3
-Flask-Cors==3.0.10
-Werkzeug==2.3.7
-PyJWT==2.8.0
+Flask
+Flask-JWT-Extended
+Flask-SQLAlchemy
+Flask-Cors
+jwt
+Werkzeug
+SQLAlchemy
+smtplib3
+email-validator
+secrets
