@@ -7,7 +7,7 @@ def send_email(subject, body, recipient_email):
     smtp_host = "smtp.gmail.com"
     smtp_port = 587
     smtp_user = "2211102010@ittelkom-pwt.ac.id"
-    smtp_password = "1700428480@Chiel.yu"
+    smtp_password = "??????????"
     from_addr = "2211102010@ittelkom-pwt.ac.id"
 
     # Membuat objek MIMEMultipart
