@@ -20,14 +20,11 @@ import secrets
 
 auth_bp = Blueprint("auth", __name__)
 
-# Setup logging
-
 logging.basicConfig(level=logging.DEBUG)
 
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
-    # Get data from the request
     username = request.json.get("username")
     password = request.json.get("password")
     email = request.json.get("email")
@@ -36,18 +33,14 @@ def register():
     role_id = request.json.get("role_id")
     posyandu_id = request.json.get("posyandu_id")
 
-    # Check if the username already exists
     if User.query.filter_by(username=username).first():
         return jsonify({"message": "Username already exists"}), 409
 
-    # Check if the email already exists
     if User.query.filter_by(email=email).first():
         return jsonify({"message": "Email already exists"}), 409
 
-    # Hash the password before storing it
-    hashed_password = generate_password_hash(password)
+    hashed_password = generate_password_hash(password, method='scrypt', salt_length=10)
 
-    # Create a new user
     new_user = User(
         username=username,
         password=hashed_password,
@@ -58,16 +51,13 @@ def register():
         posyandu_id=posyandu_id,
     )
 
-    # Add the user to the session and commit
     db.session.add(new_user)
     db.session.commit()
 
-    # Send notification email
     subject = "Registrasi Berhasil"
     body = "Registrasi berhasil, tunggu di setujui oleh admin."
-    send_email(subject, body, email)  # Use the email variable directly
+    send_email(subject, body, email)
 
-    # Log the stored hash for debugging
     print(f"Registered user: {new_user.username}")
 
     return jsonify({"message": "Registrasi berhasil, email notifikasi telah dikirim."})
@@ -104,6 +94,9 @@ def login():
         )
         return response, 200
 
+    if user:
+        print(f"Stored hash: {user.password}")
+
     return jsonify({"statusCode": 403, "message": "Invalid credentials"}), 403
 
 
@@ -115,7 +108,6 @@ def refresh():
         return jsonify({"message": "Refresh token not found"}), 401
 
     try:
-        # Verify and decode the refresh token
         decoded_token = jwt.decode(refresh_token, options={"verify_signature": False})
         identity = decoded_token["sub"]
         user = User.query.filter_by(username=identity).first()
@@ -123,7 +115,6 @@ def refresh():
         if not user:
             return jsonify({"message": "User not found"}), 404
 
-        # Generate new access token
         new_access_token = create_access_token(
             identity=identity, expires_delta=timedelta(minutes=15)
         )
@@ -149,15 +140,15 @@ def isLogin(f):
     def decorated_function(*args, **kwargs):
         try:
             print(f"Request headers: {request.headers}")
-            # Verify the JWT in the request
+            
             verify_jwt_in_request()
-            # Get the identity of the current user
+            
             current_user = get_jwt_identity()
             print(f"Current user: {current_user}")
         except Exception as e:
             print(
                 f"JWT verification failed: {e}"
-            )  # Log error if JWT verification fails
+            )
             return jsonify({"message": "Unauthorized", "error": str(e)}), 401
         return f(*args, **kwargs)
 
@@ -165,9 +156,9 @@ def isLogin(f):
 
 
 @auth_bp.route("/protected", methods=["GET"])
-@jwt_required()  # Ensure the request has a valid JWT
+@jwt_required()
 def protected():
-    current_user = get_jwt_identity()  # Get the identity of the current user
+    current_user = get_jwt_identity()
     return jsonify({"message": f"This is a protected route, {current_user}"}), 200
 
 
@@ -185,17 +176,14 @@ def user():
 
 @auth_bp.route("/logout", methods=["POST"])
 def logout():
-    # Membuat response
     response = make_response(jsonify({"message": "You have been logged out"}))
 
-    # Menghapus refresh token cookie
     response.delete_cookie("refresh_token_cookie")
 
     return response
 
 
 def generate_and_send_token(email):
-    # Generate a secure token
     token = secrets.token_urlsafe()
 
     user = User.query.filter_by(email=email).first()
@@ -203,7 +191,7 @@ def generate_and_send_token(email):
         user.reset_token = token
         user.reset_token_expiry = datetime.utcnow() + timedelta(
             hours=24
-        )  # Token expires in 24 hours
+        )
         db.session.commit()
 
         return token
@@ -217,7 +205,6 @@ def forget_password():
     if not user:
         return jsonify({"message": "Email not registered"}), 404
 
-    # Generate token and prepare email content
     token = generate_and_send_token(email)
     if not token:
         return jsonify({"message": "Failed to generate token"}), 500
@@ -225,7 +212,6 @@ def forget_password():
     subject = "Password Reset"
     body = f"Your password reset link: {request.url_root}/auth/reset-password/{token}"
 
-    # Send email
     try:
         send_email(subject, body, email)
     except Exception as e:
@@ -240,22 +226,20 @@ def reset_password(token):
     new_password = data.get("new_password")
     confirm_password = data.get("confirm_password")
 
-    # Fetch user from the database based on the reset token
     user = User.query.filter_by(reset_token=token).first()
     if not user:
         return jsonify({"message": "Invalid token"}), 404
 
-    # Verify token and check expiration
     token_expiry = user.reset_token_expiry
     if datetime.utcnow() > token_expiry:
         return jsonify({"message": "Expired token"}), 400
 
-    # Check password match
     if new_password != confirm_password:
         return jsonify({"message": "Passwords do not match"}), 400
 
-    # Update password in the database using the setter
-    user.password = new_password
+    hashed_password = generate_password_hash(new_password, method='scrypt', salt_length=10)
+
+    user.password = hashed_password
     db.session.commit()
 
     return jsonify({"message": "Password has been reset successfully"}), 200
