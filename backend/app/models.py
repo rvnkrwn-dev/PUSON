@@ -1,58 +1,99 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey, Enum, DateTime
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from sqlalchemy.sql import func
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 
 
-class Role(db.Model):
-    __tablename__ = "role"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
-    users = relationship("User", back_populates="role")
-
+class Puskesmas(db.Model):
+    __tablename__ = 'puskesmas'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False)
+    address = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
 class Posyandu(db.Model):
-    __tablename__ = "posyandu"
-
-    id = Column(Integer, primary_key=True)
+    __tablename__ = 'posyandu'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    puskesmas_id = Column(Integer, ForeignKey('puskesmas.id', ondelete='CASCADE'))
     name = Column(String(100), nullable=False)
-    users = relationship("User", back_populates="posyandu")
+    address = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    puskesmas = relationship("Puskesmas")
 
+class Role(db.Model):
+    __tablename__ = 'role'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    role_name = Column(String(50), unique=True, nullable=False)
+    description = Column(Text)
 
 class User(db.Model):
-    __tablename__ = "user"
-
+    __tablename__ = 'user'
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), unique=True, nullable=False)
-    _password = Column(
-        "password", String(255), nullable=False
-    )
+    password = Column(String(255), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     name = Column(String(100), nullable=False)
     address = Column(String(255), nullable=False)
-    role_id = Column(Integer, ForeignKey("role.id"), nullable=True)
-    posyandu_id = Column(Integer, ForeignKey("posyandu.id"), nullable=True)
-    created_at = Column(TIMESTAMP, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)
-    reset_token = db.Column(db.String(255), nullable=True)
-    reset_token_expiry = db.Column(db.DateTime, nullable=True)
+    role_id = Column(Integer, ForeignKey('role.id', ondelete='SET NULL'))
+    posyandu_id = Column(Integer, ForeignKey('posyandu.id', ondelete='SET NULL'))
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    reset_token = Column(String(255))
+    reset_token_expiry = Column(DateTime)
+    role = relationship("Role")
+    posyandu = relationship("Posyandu")
 
-    role = relationship("Role", back_populates="users")
-    posyandu = relationship("Posyandu", back_populates="users")
-
-    @property
-    def password(self):
-        raise AttributeError("password is not a readable attribute")
-
-    @password.setter
-    def password(self, password):
-        # Generates and stores the password hash with a salt length of 10
-        self._password = generate_password_hash(
-            password, method="pbkdf2:sha256", salt_length=10
-        )
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        # Checks the password against the stored hash
-        return check_password_hash(self._password, password)
+        return check_password_hash(self.password, password)
+
+class Child(db.Model):
+    __tablename__ = 'child'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'))
+    name = Column(String(100), nullable=False)
+    date_of_birth = Column(DateTime, nullable=False)
+    gender = Column(Enum('male', 'female'), nullable=False)
+    weight = Column(Float)
+    height = Column(Float)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    user = relationship("User")
+
+class DataCheckup(db.Model):
+    __tablename__ = 'data_checkup'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    child_id = Column(Integer, ForeignKey('child.id', ondelete='CASCADE'))
+    user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'))
+    checkup_date = Column(DateTime, nullable=False)
+    weight = Column(Float)
+    height = Column(Float)
+    head_circumference = Column(Float)
+    notes = Column(Text)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    child = relationship("Child")
+    user = relationship("User")
+
+class Stunting(db.Model):
+    __tablename__ = 'stunting'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    child_id = Column(Integer, ForeignKey('child.id', ondelete='CASCADE'))
+    stunting_status = Column(Enum('normal', 'stunted'), nullable=False)
+    date_assessed = Column(DateTime, nullable=False)
+    assessment_notes = Column(Text)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    child = relationship("Child")
+
+class RefreshTokens(db.Model):
+    __tablename__ = 'refresh_tokens'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE'))
+    token = Column(String(255), nullable=False)
+    user = relationship("User")
