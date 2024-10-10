@@ -8,7 +8,7 @@
           </div>
           <div class="mt-8">
             <!-- Form -->
-            <form>
+            <form @submit.prevent="handleSubmit">
               <div class="grid gap-y-4">
                 <!-- Form Group -->
                 <div>
@@ -89,6 +89,26 @@
 definePageMeta({
   layout: false
 })
+
+const config = useRuntimeConfig();
+const email = ref<string|null>(null)
+const password = ref<string|null>(null)
+
+const handleSubmit = async () => {
+  try {
+    const response = $fetch(`${config.public.apiUrl}/login`, {
+      method: 'POST',
+      body: {
+        email: email.value,
+        password: password.value
+      }
+    })
+
+    console.log(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
 </script>
 
 <style scoped></style>
