@@ -1,109 +1,94 @@
--- Active: 1701510427416@@127.0.0.1@3306@puson_db
-CREATE DATABASE puson_db;
-USE puson_db;
+CREATE DATABASE puson;
 
-CREATE TABLE PUSKESMAS (
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('super_admin', 'admin_puskesmas', 'admin_posyandu', 'user') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    reset_token VARCHAR(100),
+    reset_token_expiry DATETIME
+);
+
+
+CREATE TABLE puskesmas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     address VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE POSYANDU (
+CREATE TABLE posyandu (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    puskesmas_id INT,
+    puskesmas_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
     address VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (puskesmas_id) REFERENCES PUSKESMAS(id) ON DELETE CASCADE
+    FOREIGN KEY (puskesmas_id) REFERENCES puskesmas(id) ON DELETE CASCADE
 );
 
-CREATE TABLE ROLE (
+CREATE TABLE anak (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    role_name VARCHAR(50) UNIQUE NOT NULL,
-    description TEXT
-);
-
-CREATE TABLE USER (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
-    address VARCHAR(255) NOT NULL,
-    role_id INT,
-    posyandu_id INT,
-    reset_token VARCHAR(255),
-    reset_token_expiry DATETIME;
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (role_id) REFERENCES ROLE(id) ON DELETE SET NULL,
-    FOREIGN KEY (posyandu_id) REFERENCES POSYANDU(id) ON DELETE SET NULL
-);
-
-
-CREATE TABLE CHILD (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    name VARCHAR(100) NOT NULL,
-    date_of_birth DATE NOT NULL,
+    age INT NOT NULL,
     gender ENUM('male', 'female') NOT NULL,
-    weight FLOAT,
-    height FLOAT,
+    posyandu_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES USER(id) ON DELETE CASCADE
+    FOREIGN KEY (posyandu_id) REFERENCES posyandu(id) ON DELETE SET NULL
 );
 
-CREATE TABLE DATA_CHECKUP (
+CREATE TABLE pemeriksaan (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    child_id INT,
-    user_id INT,
-    checkup_date DATE NOT NULL,
-    weight FLOAT,
-    height FLOAT,
-    head_circumference FLOAT,
-    notes TEXT,
+    anak_id INT NOT NULL,
+    date DATE NOT NULL,
+    result TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (child_id) REFERENCES CHILD(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES USER(id) ON DELETE CASCADE
+    FOREIGN KEY (anak_id) REFERENCES anak(id) ON DELETE CASCADE
 );
 
-CREATE TABLE STUNTING (
+CREATE TABLE stunting (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    child_id INT,
-    stunting_status ENUM('normal', 'stunted') NOT NULL,
-    date_assessed DATE NOT NULL,
-    assessment_notes TEXT,
+    anak_id INT NOT NULL,
+    date DATE NOT NULL,
+    height DECIMAL(5,2) NOT NULL,
+    weight DECIMAL(5,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (child_id) REFERENCES CHILD(id) ON DELETE CASCADE
+    FOREIGN KEY (anak_id) REFERENCES anak(id) ON DELETE CASCADE
 );
 
-CREATE TABLE REFRESH_TOKENS (
+CREATE TABLE refresh_token (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    token VARCHAR(255) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES USER(id) ON DELETE CASCADE
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 
--- Data Dummy
+SELECT*FROM users
 
--- Insert default roles into the ROLE table
-INSERT INTO ROLE (id, role_name) VALUES 
-(1, 'superAdmin'),
-(2, 'adminPuskesmas'),
-(3, 'adminPosyandu'),
-(4, 'parent');
+SELECT*FROM refresh_token
 
--- Insert sample data into the POSYANDU table
-INSERT INTO POSYANDU (id, name, address) VALUES 
-(1, 'Posyandu A', '123 Main St, Jakarta'),
-(2, 'Posyandu B', '456 Elm St, Jakarta'),
-(3, 'Posyandu C', '789 Oak St, Jakarta'),
-(4, 'Posyandu D', '101 Pine St, Jakarta'),
-(5, 'Posyandu E', '202 Maple St, Jakarta');
+ALTER TABLE users
+ADD COLUMN reset_token VARCHAR(100),
+ADD COLUMN reset_token_expiry DATETIME;
