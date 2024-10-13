@@ -2,9 +2,5 @@ Flask
 Flask-JWT-Extended
 Flask-SQLAlchemy
 Flask-Cors
-jwt
 Werkzeug
 SQLAlchemy
-smtplib3
-email-validator
-secrets
