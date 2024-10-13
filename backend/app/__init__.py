@@ -11,9 +11,12 @@ def create_app():
 
     # Database configuration
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "DATABASE_URI", "mysql+pymysql://root:@127.0.0.1/puson_db"
+        "DATABASE_URI", "mysql+pymysql://root:@127.0.0.1/puson"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    # Initialize SQLAlchemy with the app
+    db.init_app(app)
 
     # Secret keys
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "*YZTs96tyAGs685qw")
@@ -23,8 +26,6 @@ def create_app():
     app.config["JWT_ACCESS_COOKIE_NAME"] = "987AUgh8712gui"
     app.config["JWT_REFRESH_COOKIE_NAME"] = "*&As6yuaiGS"
 
-
-    db.init_app(app)
     JWTManager(app)
 
     with app.app_context():
@@ -34,15 +35,5 @@ def create_app():
     from .routes import auth_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
-
-    # # Configure Flask-Mail with SMTP server details
-    # app.config["MAIL_SERVER"] = "smtp-relay.brevo.com"
-    # app.config["MAIL_PORT"] = 587
-    # app.config["MAIL_USE_TLS"] = True
-    # app.config["MAIL_USERNAME"] = os.getenv(
-    #     "7d5b94001@smtp-brevo.com"
-    # )
-    # app.config["MAIL_PASSWORD"] = os.getenv("m8xD1nUcgQBpqjkW")
-    # mail = Mail(app)
 
     return app
