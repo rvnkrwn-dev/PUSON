@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, Enum, DateTime
 from .. import db
 from sqlalchemy.sql import func
 
-
 class User(db.Model):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -10,7 +9,9 @@ class User(db.Model):
     email = Column(String(100), nullable=False, unique=True)
     password = Column(String(255), nullable=False)
     role = Column(
-        Enum("super_admin", "admin_puskesmas", "admin_posyandu", "user"), nullable=False
+        Enum("super_admin", "admin_puskesmas", "admin_posyandu", "parents"), 
+        nullable=False, 
+        default="parents"
     )
     created_at = Column(DateTime, default=func.current_timestamp())
     updated_at = Column(
