@@ -9,7 +9,7 @@ CREATE TABLE users (
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    role ENUM('super_admin', 'admin_puskesmas', 'admin_posyandu', 'user') NOT NULL,
+    role ENUM('super_admin', 'admin_puskesmas', 'admin_posyandu', 'parents') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     reset_token VARCHAR(100),
