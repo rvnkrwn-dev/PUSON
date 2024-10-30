@@ -1,8 +1,6 @@
-DROP DATABASE puson;
+CREATE DATABASE puson;
 
-create database puson;
-
-use puson;
+USE puson;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -87,12 +85,3 @@ CREATE TABLE logs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
-
-SELECT*FROM users
-
-SELECT*FROM refresh_token
-
-ALTER TABLE users
-ADD COLUMN reset_token VARCHAR(100),
-ADD COLUMN reset_token_expiry DATETIME;
