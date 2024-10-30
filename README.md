@@ -74,13 +74,13 @@ npm run build
 python -m venv venv
 
 # activate virtual environment
-source venv/bin/activate
+.venv/Scripts/activate
 
 # install dependencies
 pip install -r requirements.txt
 
 # run the Flask app
-python app.py
+python run.py
 ```
 
 ## Database Setup
