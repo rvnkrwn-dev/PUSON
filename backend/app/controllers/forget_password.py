@@ -1,4 +1,3 @@
-# routes/forget_password.py
 from flask import Blueprint, jsonify, request
 from ..models.user import User, updateUser
 from ..services.email_helper import send_email
