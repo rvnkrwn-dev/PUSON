@@ -13,9 +13,13 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "DATABASE_URI", "mysql+pymysql://root:@127.0.0.1/puson"
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        f"mysql+pymysql://{os.getenv('DATABASE_USER')}:"
+        f"{os.getenv('DATABASE_PASSWORD')}@"
+        f"{os.getenv('DATABASE_HOST')}/"
+        f"{os.getenv('DATABASE_NAME')}"
     )
+    
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
