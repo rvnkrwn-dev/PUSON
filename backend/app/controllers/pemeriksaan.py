@@ -1,23 +1,26 @@
 from flask import Blueprint, request, jsonify
 from ..models.pemeriksaan import Pemeriksaan
 from ..middlewares.has_access import has_access
+from ..services.check_stunting import check_stunting
 from .. import db
 
 pemeriksaan_bp = Blueprint("pemeriksaan_bp", __name__)
 
 
 @pemeriksaan_bp.route("/pemeriksaan", methods=["POST"])
-@has_access(['admin_posyandu'])
+@has_access(["admin_posyandu"])
 def create_pemeriksaan():
     data = request.get_json()
     anak_id = data.get("anak_id")
     date = data.get("date")
-    result = data.get("result")
 
-    if not anak_id or not date or not result:
+    if not anak_id or not date:
         return jsonify({"error": "Data tidak lengkap"}), 400
 
+    result = check_stunting(anak_id)
+
     new_pemeriksaan = Pemeriksaan(anak_id=anak_id, date=date, result=result)
+
     db.session.add(new_pemeriksaan)
     db.session.commit()
 
@@ -34,7 +37,7 @@ def create_pemeriksaan():
 
 
 @pemeriksaan_bp.route("/pemeriksaan/<int:id>", methods=["PUT"])
-@has_access(['admin_posyandu'])
+@has_access(["admin_posyandu"])
 def update_pemeriksaan(id):
     data = request.get_json()
     pemeriksaan = Pemeriksaan.query.get(id)
@@ -64,7 +67,7 @@ def update_pemeriksaan(id):
 
 
 @pemeriksaan_bp.route("/pemeriksaan/<int:id>", methods=["DELETE"])
-@has_access(['admin_posyandu'])
+@has_access(["admin_posyandu"])
 def delete_pemeriksaan(id):
     pemeriksaan = Pemeriksaan.query.get(id)
 
@@ -81,6 +84,7 @@ def delete_pemeriksaan(id):
 @has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
 def get_pemeriksaan_by_anak(anak_id):
     pemeriksaan_list = Pemeriksaan.query.filter_by(anak_id=anak_id).all()
+
     return jsonify(
         [
             {
