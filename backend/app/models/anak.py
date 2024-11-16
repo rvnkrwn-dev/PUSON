@@ -24,7 +24,7 @@ def register_anak(name, age, gender, posyandu_id):
     anak = Anak(name=name, age=age, gender=gender, posyandu_id=posyandu_id)
     db.session.add(anak)
     db.session.commit()
-    return anak  # Returns the newly registered `Anak` object
+    return anak
 
 
 def update_anak(id, data):
@@ -42,7 +42,7 @@ def update_anak(id, data):
         anak.posyandu_id = data["posyandu_id"]
 
     db.session.commit()
-    return anak  # Returns the updated `Anak` object
+    return anak
 
 
 def delete_anak(id):
@@ -52,7 +52,7 @@ def delete_anak(id):
 
     db.session.delete(anak)
     db.session.commit()
-    return True  # Returns True if a record was deleted
+    return True
 
 
 def get_pemeriksaan_history(posyandu_id):
