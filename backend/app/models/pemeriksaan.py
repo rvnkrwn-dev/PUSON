@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, Date, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .. import db
+from ..services.check_stunting import check_stunting
 
 
 class Pemeriksaan(db.Model):
@@ -19,10 +20,14 @@ class Pemeriksaan(db.Model):
     anak = relationship("Anak")
 
 
-def add_pemeriksaan(anak_id, date, result):
+def add_pemeriksaan(anak_id, date, result=None):
+    result = check_stunting(anak_id) if result is None else result
+
     pemeriksaan = Pemeriksaan(anak_id=anak_id, date=date, result=result)
+
     db.session.add(pemeriksaan)
     db.session.commit()
+
     return pemeriksaan
 
 
@@ -39,6 +44,11 @@ def update_pemeriksaan(id, data):
         pemeriksaan.result = data["result"]
 
     db.session.commit()
+
+    if "result" not in data:
+        pemeriksaan.result = check_stunting(pemeriksaan.anak_id)
+        db.session.commit()
+
     return pemeriksaan
 
 
