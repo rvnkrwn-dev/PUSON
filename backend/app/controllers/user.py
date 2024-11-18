@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, make_response, request
 from flask_jwt_extended import jwt_required, get_jwt, create_access_token
 from ..middlewares.is_login import is_login
+from ..middlewares.has_access import has_access
 from ..models.user import User
 from ..services.blacklisted_token import blacklisted_tokens
 from .. import db
@@ -67,6 +68,7 @@ def create_user():
 @user_bp.route("/user/<int:id>", methods=["PUT"])
 @jwt_required()
 @is_login
+@has_access(["super_admin", "admin_puskesmas", "admin_posyandu"])
 def update_user(id):
     data = request.json
     try:
@@ -89,6 +91,7 @@ def update_user(id):
 @user_bp.route("/user/<int:id>", methods=["DELETE"])
 @jwt_required()
 @is_login
+@has_access(["super_admin", "admin_puskesmas", "admin_posyandu"])
 def delete_user(id):
     try:
         user = User.query.get(id)
