@@ -67,6 +67,33 @@ def update_stunting_data(id):
     ), 200
 
 
+@stunting_bp.route("/stunting/anak/<int:anak_id>", methods=["PUT"])
+@has_access(['admin_posyandu'])
+def update_stunting_data_by_anak(anak_id):
+    data = request.get_json()
+    stunting_record = Stunting.query.filter_by(anak_id=anak_id).first()
+
+    if not stunting_record:
+        return jsonify({"error": "Data stunting tidak ditemukan"}), 404
+
+    for key, value in data.items():
+        setattr(stunting_record, key, value)
+
+    db.session.commit()
+
+    return jsonify(
+        {
+            "id": stunting_record.id,
+            "anak_id": stunting_record.anak_id,
+            "date": stunting_record.date,
+            "height": stunting_record.height,
+            "weight": stunting_record.weight,
+            "created_at": stunting_record.created_at,
+            "updated_at": stunting_record.updated_at,
+        }
+    ), 200
+
+
 @stunting_bp.route("/stunting/<int:id>", methods=["DELETE"])
 @has_access(['admin_posyandu'])
 def delete_stunting_data(id):
@@ -79,6 +106,42 @@ def delete_stunting_data(id):
     db.session.commit()
 
     return jsonify({"message": "Data stunting berhasil dihapus"}), 200
+
+
+@stunting_bp.route("/stunting/anak/<int:anak_id>", methods=["DELETE"])
+@has_access(['admin_posyandu'])
+def delete_stunting_data_by_anak(anak_id):
+    stunting_records = Stunting.query.filter_by(anak_id=anak_id).all()
+
+    if not stunting_records:
+        return jsonify({"error": "Data stunting tidak ditemukan untuk anak_id tersebut"}), 404
+
+    for record in stunting_records:
+        db.session.delete(record)
+
+    db.session.commit()
+
+    return jsonify({"message": "Data stunting berhasil dihapus"}), 200
+
+
+@stunting_bp.route("/stunting", methods=["GET"])
+@has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
+def get_data():
+    stunting_list = Stunting.query.all()
+    return jsonify(
+        [
+            {
+                "id": stunting.id,
+                "anak_id": stunting.anak_id,
+                "date": stunting.date,
+                "height": stunting.height,
+                "weight": stunting.weight,
+                "created_at": stunting.created_at,
+                "updated_at": stunting.updated_at,
+            }
+            for stunting in stunting_list
+        ]
+    ), 200
 
 
 @stunting_bp.route("/stunting/anak/<int:anak_id>", methods=["GET"])
