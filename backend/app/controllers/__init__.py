@@ -3,7 +3,7 @@ from .login import login_bp
 from .refresh import refresh_bp
 from .logout import logout_bp
 from .user import user_bp
-from .user import users_bp
+from .users import users_bp
 from .forget_password import forget_password_bp
 from .reset_password import reset_password_bp
 from .puskesmas import puskesmas_bp
