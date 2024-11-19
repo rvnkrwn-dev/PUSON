@@ -50,6 +50,27 @@ def get_all():
     ), 200
 
 
+@puskesmas_bp.route("/puskesmas/<int:id>", methods=["GET"])
+@has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
+def get_puskesmas_detail(id):
+    puskesmas = Puskesmas.query.get(id)
+    if not puskesmas:
+        return jsonify({"error": "Puskesmas tidak ditemukan"}), 404
+
+    return jsonify(
+        [
+            {
+                "id": puskesmas.id,
+                "name": puskesmas.name,
+                "address": puskesmas.address,
+                "phone": puskesmas.phone,
+                "created_at": puskesmas.created_at,
+                "updated_at": puskesmas.updated_at,
+            }
+        ]
+    ), 200
+
+
 @puskesmas_bp.route("/puskesmas/<int:id>", methods=["PUT"])
 @has_access(['super_admin', 'admin_puskesmas'])
 def update(id):
