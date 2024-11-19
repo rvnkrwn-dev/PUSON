@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..models import Anak, Pemeriksaan, Stunting
+from ..models import Anak
 from ..middlewares.has_access import has_access
 from .. import db
 
@@ -113,42 +113,4 @@ def get_anak_detail(id):
             "created_at": anak.created_at,
             "updated_at": anak.updated_at,
         }
-    ), 200
-
-
-@anak_bp.route("/anak/<int:posyandu_id>/pemeriksaan", methods=["GET"])
-@has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
-def get_pemeriksaan_history(posyandu_id):
-    pemeriksaan_list = Pemeriksaan.query.filter_by(posyandu_id=posyandu_id).all()
-    return jsonify(
-        [
-            {
-                "id": pemeriksaan.id,
-                "anak_id": pemeriksaan.anak_id,
-                "date": pemeriksaan.date,
-                "result": pemeriksaan.result,
-                "created_at": pemeriksaan.created_at,
-                "updated_at": pemeriksaan.updated_at,
-            }
-            for pemeriksaan in pemeriksaan_list
-        ]
-    ), 200
-
-
-@anak_bp.route("/anak/<int:anak_id>/stunting", methods=["GET"])
-@has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
-def get_stunting_history(anak_id):
-    stunting_list = Stunting.query.filter_by(anak_id=anak_id).all()
-    return jsonify(
-        [
-            {
-                "id": stunting.id,
-                "anak_id": stunting.anak_id,
-                "date": stunting.date,
-                "status": stunting.status,
-                "created_at": stunting.created_at,
-                "updated_at": stunting.updated_at,
-            }
-            for stunting in stunting_list
-        ]
     ), 200
