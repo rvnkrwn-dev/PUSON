@@ -66,6 +66,38 @@ def update_pemeriksaan(id):
     ), 200
 
 
+@pemeriksaan_bp.route("/pemeriksaan/anak/<int:anak_id>", methods=["PUT"])
+@has_access(["admin_posyandu"])
+def update_pemeriksaan_by_anak(anak_id):
+    data = request.get_json()
+    pemeriksaan_list = Pemeriksaan.query.filter_by(anak_id=anak_id).all()
+
+    if not pemeriksaan_list:
+        return jsonify({"error": "Pemeriksaan tidak ditemukan untuk anak_id tersebut"}), 404
+
+    for pemeriksaan in pemeriksaan_list:
+        if "date" in data:
+            pemeriksaan.date = data["date"]
+        if "result" in data:
+            pemeriksaan.result = data["result"]
+
+    db.session.commit()
+
+    return jsonify(
+        [
+            {
+                "id": pemeriksaan.id,
+                "anak_id": pemeriksaan.anak_id,
+                "date": pemeriksaan.date,
+                "result": pemeriksaan.result,
+                "created_at": pemeriksaan.created_at,
+                "updated_at": pemeriksaan.updated_at,
+            }
+            for pemeriksaan in pemeriksaan_list
+        ]
+    ), 200
+
+
 @pemeriksaan_bp.route("/pemeriksaan/<int:id>", methods=["DELETE"])
 @has_access(["admin_posyandu"])
 def delete_pemeriksaan(id):
@@ -80,10 +112,29 @@ def delete_pemeriksaan(id):
     return jsonify({"message": "Pemeriksaan berhasil dihapus"}), 200
 
 
+@pemeriksaan_bp.route("/pemeriksaan/anak/<int:anak_id>", methods=["DELETE"])
+@has_access(["admin_posyandu"])
+def delete_pemeriksaan_by_anak(anak_id):
+    pemeriksaan_list = Pemeriksaan.query.filter_by(anak_id=anak_id).all()
+
+    if not pemeriksaan_list:
+        return jsonify({"error": "Data pemeriksaan tidak ditemukan untuk anak_id tersebut"}), 404
+
+    for pemeriksaan in pemeriksaan_list:
+        db.session.delete(pemeriksaan)
+
+    db.session.commit()
+
+    return jsonify({"message": "Data pemeriksaan berhasil dihapus"}), 200
+
+
 @pemeriksaan_bp.route("/pemeriksaan/anak/<int:anak_id>", methods=["GET"])
 @has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
 def get_pemeriksaan_by_anak(anak_id):
     pemeriksaan_list = Pemeriksaan.query.filter_by(anak_id=anak_id).all()
+
+    if not pemeriksaan_list:
+        return jsonify({"error": "Data pemeriksaan anak tidak ditemukan"}), 404
 
     return jsonify(
         [
@@ -96,5 +147,44 @@ def get_pemeriksaan_by_anak(anak_id):
                 "updated_at": pemeriksaan.updated_at,
             }
             for pemeriksaan in pemeriksaan_list
+        ]
+    ), 200
+
+
+@pemeriksaan_bp.route("/pemeriksaan", methods=["GET"])
+@has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
+def get_all_pemeriksaan():
+    pemeriksaan_list = Pemeriksaan.query.all()
+
+    return jsonify(
+        [
+            {
+                "id": pemeriksaan.id,
+                "anak_id": pemeriksaan.anak_id,
+                "date": pemeriksaan.date,
+                "result": pemeriksaan.result,
+                "created_at": pemeriksaan.created_at,
+                "updated_at": pemeriksaan.updated_at,
+            }
+            for pemeriksaan in pemeriksaan_list
+        ]
+    ), 200
+
+
+@pemeriksaan_bp.route("/pemeriksaan/<int:id>", methods=["GET"])
+@has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
+def get_pemeriksaan_by_id(id):
+    pemeriksaan = Pemeriksaan.query.get(id)
+
+    return jsonify(
+        [
+            {
+                "id": pemeriksaan.id,
+                "anak_id": pemeriksaan.anak_id,
+                "date": pemeriksaan.date,
+                "result": pemeriksaan.result,
+                "created_at": pemeriksaan.created_at,
+                "updated_at": pemeriksaan.updated_at,
+            }
         ]
     ), 200
