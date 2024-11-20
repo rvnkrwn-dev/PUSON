@@ -50,6 +50,7 @@ export default () => {
                 setToken(data.access_token)
                 resolve(true)
             } catch (error) {
+                await logout();
                 reject(error)
             }
         })

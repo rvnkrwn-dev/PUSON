@@ -35,7 +35,7 @@
     </div>
   </div>
 
-  <div class="w-full h-full bg-gray-50 lg:ps-64">
+  <div class="w-full h-full lg:ps-64">
     <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
       <div class="h-full w-full flex flex-col items-center justify-center">
         <div class="w-full max-w-md mx-auto p-6">
