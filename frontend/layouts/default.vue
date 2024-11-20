@@ -1,7 +1,7 @@
 <template>
-  <AppHeader />
-  <AppSidebar />
-  <slot />
+  <AppHeader/>
+  <AppSidebar/>
+  <slot/>
 </template>
 
 <script setup lang="ts">

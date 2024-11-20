@@ -10,10 +10,10 @@
     <div class="relative flex flex-col h-full max-h-full">
       <div class="px-6 pt-4">
         <!-- Logo -->
-        <a class="flex-none rounded-xl text-xl inline-block font-bold text-blue-600 focus:outline-none focus:opacity-80" href="#"
+        <NuxtLink to="/" class="flex-none rounded-xl text-xl inline-block font-bold text-blue-600 focus:outline-none focus:opacity-80" href="#"
            aria-label="Puson">
           PUSON
-        </a>
+        </NuxtLink>
         <!-- End Logo -->
       </div>
 
@@ -23,280 +23,55 @@
         <nav class="hs-accordion-group p-3 w-full flex flex-col flex-wrap" data-hs-accordion-always-open>
           <ul class="flex flex-col space-y-1">
             <li>
-              <a class="flex items-center gap-x-3.5 py-2 px-2.5 bg-gray-100 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                 href="#">
-                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                     stroke-linejoin="round">
-                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                  <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
+              <NuxtLink active-class="bg-gray-100" class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                 to="/">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="m12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81zM12 3L2 12h3v8h6v-6h2v6h6v-8h3"/></svg>
                 Dashboard
-              </a>
+              </NuxtLink>
             </li>
 
-            <li class="hs-accordion" id="users-accordion">
-              <button type="button"
-                      class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                      aria-expanded="true" aria-controls="users-accordion-child">
-                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                     stroke-linejoin="round">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                </svg>
-                Users
-
-                <svg class="hs-accordion-active:block ms-auto hidden size-4" xmlns="http://www.w3.org/2000/svg"
-                     width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m18 15-6-6-6 6"/>
-                </svg>
-
-                <svg class="hs-accordion-active:hidden ms-auto block size-4" xmlns="http://www.w3.org/2000/svg"
-                     width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m6 9 6 6 6-6"/>
-                </svg>
-              </button>
-
-              <div id="users-accordion-child"
-                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                   role="region" aria-labelledby="users-accordion">
-                <ul class="hs-accordion-group ps-8 pt-1 space-y-1" data-hs-accordion-always-open>
-                  <li class="hs-accordion" id="users-accordion-sub-1">
-                    <button type="button"
-                            class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                            aria-expanded="true" aria-controls="users-accordion-sub-1-child">
-                      Sub Menu 1
-
-                      <svg class="hs-accordion-active:block ms-auto hidden size-4" xmlns="http://www.w3.org/2000/svg"
-                           width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                           stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m18 15-6-6-6 6"/>
-                      </svg>
-
-                      <svg class="hs-accordion-active:hidden ms-auto block size-4" xmlns="http://www.w3.org/2000/svg"
-                           width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                           stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m6 9 6 6 6-6"/>
-                      </svg>
-                    </button>
-
-                    <div id="users-accordion-sub-1-child"
-                         class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                         role="region" aria-labelledby="users-accordion-sub-1">
-                      <ul class="pt-1 space-y-1">
-                        <li>
-                          <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                             href="#">
-                            Link 1
-                          </a>
-                        </li>
-                        <li>
-                          <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                             href="#">
-                            Link 2
-                          </a>
-                        </li>
-                        <li>
-                          <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                             href="#">
-                            Link 3
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </li>
-                  <li class="hs-accordion" id="users-accordion-sub-2">
-                    <button type="button"
-                            class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                            aria-expanded="true" aria-controls="users-accordion-sub-2-child">
-                      Sub Menu 2
-
-                      <svg class="hs-accordion-active:block ms-auto hidden size-4" xmlns="http://www.w3.org/2000/svg"
-                           width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                           stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m18 15-6-6-6 6"/>
-                      </svg>
-
-                      <svg class="hs-accordion-active:hidden ms-auto block size-4" xmlns="http://www.w3.org/2000/svg"
-                           width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                           stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m6 9 6 6 6-6"/>
-                      </svg>
-                    </button>
-
-                    <div id="users-accordion-sub-2-child"
-                         class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                         role="region" aria-labelledby="users-accordion-sub-2">
-                      <ul class="pt-1 space-y-1">
-                        <li>
-                          <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                             href="#">
-                            Link 1
-                          </a>
-                        </li>
-                        <li>
-                          <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                             href="#">
-                            Link 2
-                          </a>
-                        </li>
-                        <li>
-                          <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                             href="#">
-                            Link 3
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </li>
-
-            <li class="hs-accordion" id="account-accordion">
-              <button type="button"
-                      class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                      aria-expanded="true" aria-controls="account-accordion-child">
-                <svg class="shrink-0 mt-0.5 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                     stroke-linejoin="round">
-                  <circle cx="18" cy="15" r="3"/>
-                  <circle cx="9" cy="7" r="4"/>
-                  <path d="M10 15H6a4 4 0 0 0-4 4v2"/>
-                  <path d="m21.7 16.4-.9-.3"/>
-                  <path d="m15.2 13.9-.9-.3"/>
-                  <path d="m16.6 18.7.3-.9"/>
-                  <path d="m19.1 12.2.3-.9"/>
-                  <path d="m19.6 18.7-.4-1"/>
-                  <path d="m16.8 12.3-.4-1"/>
-                  <path d="m14.3 16.6 1-.4"/>
-                  <path d="m20.7 13.8 1-.4"/>
-                </svg>
-                Account
-
-                <svg class="hs-accordion-active:block ms-auto hidden size-4" xmlns="http://www.w3.org/2000/svg"
-                     width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m18 15-6-6-6 6"/>
-                </svg>
-
-                <svg class="hs-accordion-active:hidden ms-auto block size-4" xmlns="http://www.w3.org/2000/svg"
-                     width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m6 9 6 6 6-6"/>
-                </svg>
-              </button>
-
-              <div id="account-accordion-child"
-                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                   role="region" aria-labelledby="account-accordion">
-                <ul class="ps-8 pt-1 space-y-1">
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                       href="#">
-                      Link 1
-                    </a>
-                  </li>
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                       href="#">
-                      Link 2
-                    </a>
-                  </li>
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                       href="#">
-                      Link 3
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-
-            <li class="hs-accordion" id="projects-accordion">
-              <button type="button"
-                      class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                      aria-expanded="true" aria-controls="projects-accordion-child">
-                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                     stroke-linejoin="round">
-                  <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                </svg>
-                Projects
-
-                <svg class="hs-accordion-active:block ms-auto hidden size-4" xmlns="http://www.w3.org/2000/svg"
-                     width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m18 15-6-6-6 6"/>
-                </svg>
-
-                <svg class="hs-accordion-active:hidden ms-auto block size-4" xmlns="http://www.w3.org/2000/svg"
-                     width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m6 9 6 6 6-6"/>
-                </svg>
-              </button>
-
-              <div id="projects-accordion-child"
-                   class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
-                   role="region" aria-labelledby="projects-accordion">
-                <ul class="ps-8 pt-1 space-y-1">
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                       href="#">
-                      Link 1
-                    </a>
-                  </li>
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                       href="#">
-                      Link 2
-                    </a>
-                  </li>
-                  <li>
-                    <a class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
-                       href="#">
-                      Link 3
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-
-            <li><a
+            <li><NuxtLink
+                active-class="bg-gray-100"
                 class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100"
-                href="#">
-              <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                   fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
-                <line x1="16" x2="16" y1="2" y2="6"/>
-                <line x1="8" x2="8" y1="2" y2="6"/>
-                <line x1="3" x2="21" y1="10" y2="10"/>
-                <path d="M8 14h.01"/>
-                <path d="M12 14h.01"/>
-                <path d="M16 14h.01"/>
-                <path d="M8 18h.01"/>
-                <path d="M12 18h.01"/>
-                <path d="M16 18h.01"/>
-              </svg>
-              Calendar
-            </a></li>
-            <li><a
+                to="/puskesmas">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M2 22V7a1 1 0 0 1 1-1h4V2h10v4h4a1 1 0 0 1 1 1v15h-8v-5h-4v5zM9 4v6h2V8h2v2h2V4h-2v2h-2V4zM4 20h4v-3H4zm0-5h4v-3H4zm12 5h4v-3h-4zm0-5h4v-3h-4zm-6 0h4v-3h-4z"/></svg>
+              Puskesmas
+            </NuxtLink></li>
+            <li><NuxtLink
+                active-class="bg-gray-100"
                 class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100"
-                href="#">
-              <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                   fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-              </svg>
-              Documentation
-            </a></li>
+                to="/posyandu">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 5v14H5V5zm2-2H3v18h18zm-4 14H7v-1h10zm0-2H7v-1h10zm0-3H7V7h10z"/></svg>
+              Posyandu
+            </NuxtLink></li>
+            <li><NuxtLink
+                active-class="bg-gray-100"
+                class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100"
+                to="/anak">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2v8h8a8 8 0 0 0-8-8m6.32 13.89A7.95 7.95 0 0 0 21 11H6.44L5.5 9H2v2h2.22s1.89 4.07 2.12 4.42C5.24 16 4.5 17.17 4.5 18.5A3.5 3.5 0 0 0 8 22c1.76 0 3.22-1.3 3.46-3h2.08c.24 1.7 1.7 3 3.46 3a3.5 3.5 0 0 0 3.5-3.5c0-1.04-.46-1.97-1.18-2.61M8 20a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 8 17a1.5 1.5 0 0 1 1.5 1.5A1.5 1.5 0 0 1 8 20m9 0a1.5 1.5 0 0 1-1.5-1.5A1.5 1.5 0 0 1 17 17a1.5 1.5 0 0 1 1.5 1.5A1.5 1.5 0 0 1 17 20"/></svg>
+              Anak
+            </NuxtLink></li>
+            <li><NuxtLink
+                active-class="bg-gray-100"
+                class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100"
+                to="/pemeriksaan">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 7h-2.81c-.45-.8-1.07-1.5-1.82-2L16 3.41L14.59 2l-2.17 2.17a6 6 0 0 0-2.83 0L7.41 2L6 3.41L7.62 5c-.75.5-1.36 1.21-1.81 2H3v2h2.09c-.06.33-.09.66-.09 1v1H3v2h2v1c0 .34.03.67.09 1H3v2h2.81A6 6 0 0 0 13 19.65V19c0-.57.09-1.14.25-1.69c-.66.45-1.45.69-2.25.69c-2.21 0-4-1.79-4-4v-4c0-2.21 1.79-4 4-4s4 1.79 4 4v4c0 .19 0 .39-.05.58c.59-.54 1.29-.96 2.05-1.23V13h2v-2h-2v-1c0-.34-.03-.67-.09-1H19zm2.34 9l-3.59 3.59L16.16 18L15 19.16l2.75 3l4.75-4.75zM13 9v2H9V9zm0 4v2H9v-2z"/></svg>
+              Pemeriksaan
+            </NuxtLink></li>
+            <li><NuxtLink
+                active-class="bg-gray-100"
+                class="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100"
+                to="/stunting">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .5a1.746 1.746 0 0 0-1 3.18v1.4c-.9.13-1.74.42-2.5.86L7.39 4.35c.19-.52.14-1.12-.2-1.6C6.84 2.26 6.3 2 5.75 2c-.35 0-.7.1-1 .32c-.79.55-.99 1.64-.43 2.43c.34.49.88.75 1.43.75l1.18 1.68c-.43.43-.77.91-1.06 1.44c-.2-.08-.41-.12-.62-.12c-.45 0-.9.17-1.25.5c-.67.7-.67 1.8 0 2.5c.29.27.64.42 1 .5c0 .54.07 1.06.18 1.56l-1.31.35c-.31-.26-.71-.41-1.12-.41c-.15 0-.31 0-.46.06a1.75 1.75 0 0 0-1.23 2.15C1.27 16.5 2 17 2.75 17c.15 0 .3 0 .46-.06c.57-.16 1-.58 1.18-1.1l1.51-.41c.45.79 1.05 1.49 1.75 2.07l-1.1 2c-.55.08-1.05.39-1.34.92a1.749 1.749 0 1 0 3.08 1.66c.28-.52.27-1.12.02-1.61l1.07-1.97c.81.32 1.69.5 2.62.5h.18c-.13.26-.18.56-.18.88c.08.92.84 1.62 1.75 1.62h.13c.97-.08 1.69-.92 1.62-1.88c-.04-.5-.29-.94-.65-1.23c.47-.21.92-.48 1.34-.79l2.34 2.34c-.1.56.06 1.13.47 1.56c.35.33.8.5 1.25.5s.9-.17 1.25-.5c.67-.7.67-1.8 0-2.5c-.35-.33-.8-.5-1.25-.5c-.1 0-.2 0-.31.03l-2.34-2.34c.49-.65.87-1.39 1.11-2.19h1.11A1.746 1.746 0 0 0 23 13a1.746 1.746 0 0 0-3.18-1H19c0-1.57-.5-3-1.4-4.19l1.34-1.34c.11.03.21.03.31.03c.45 0 .9-.17 1.25-.5c.67-.69.67-1.8 0-2.5c-.35-.33-.8-.5-1.25-.5s-.9.17-1.25.5c-.41.43-.57 1-.47 1.56L16.19 6.4c-.92-.69-2-1.15-3.19-1.32v-1.4A1.746 1.746 0 0 0 12 .5M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5s5 2.24 5 5s-2.24 5-5 5m-1.5-8C9.67 9 9 9.67 9 10.5s.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S11.33 9 10.5 9m3.5 4c-.55 0-1 .45-1 1s.45 1 1 1s1-.45 1-1s-.45-1-1-1"/></svg>
+              Stunting
+            </NuxtLink></li>
+            <li><NuxtLink
+                active-class="bg-gray-100"
+                class="cursor-pointer w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg hover:bg-gray-100"
+                @click="handleLogout">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M4 12a1 1 0 0 0 1 1h7.59l-2.3 2.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l4-4a1 1 0 0 0 .21-.33a1 1 0 0 0 0-.76a1 1 0 0 0-.21-.33l-4-4a1 1 0 1 0-1.42 1.42l2.3 2.29H5a1 1 0 0 0-1 1M17 2H7a3 3 0 0 0-3 3v3a1 1 0 0 0 2 0V5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-3a1 1 0 0 0-2 0v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3"/></svg>
+              Sign Out
+            </NuxtLink></li>
           </ul>
         </nav>
       </div>
@@ -306,7 +81,24 @@
 </template>
 
 <script setup lang="ts">
+const {logout} = useAuth()
 
+const handleLogout = async () => {
+  const confirmLogout = confirm("Apakah Anda yakin ingin logout?");
+  if (!confirmLogout) return; // Jika pengguna membatalkan, keluar dari fungsi
+
+  try {
+    // Memanggil fungsi logout dari useAuth
+    await logout();
+
+    // Redirect atau tindakan lain setelah logout berhasil
+    alert('Anda telah berhasil logout.');
+    window.location.href = '/login'; // Redirect ke halaman login atau halaman lain
+  } catch (error) {
+    console.error('Gagal logout:', error);
+    alert('Terjadi kesalahan saat logout.');
+  }
+};
 </script>
 
 <style scoped>
