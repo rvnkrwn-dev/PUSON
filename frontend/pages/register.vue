@@ -3,7 +3,8 @@
     <div class="w-full max-w-md mx-auto p-6">
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
         <div class="p-4 sm:p-7">
-          <div class="text-center">
+          <div class="text-center flex gap-2 items-center justify-around">
+            <AppLogo/>
             <h1 class="block text-2xl font-bold text-gray-800">Daftar</h1>
           </div>
 

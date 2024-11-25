@@ -1,21 +1,21 @@
 <template>
   <NuxtLink to="/"
             aria-label="Puson">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="20 5 260 90" width="220" height="80">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 300 80" width="180" height="60">
       <!-- Background Circle for the Symbol -->
-      <circle cx="50" cy="45" r="20" fill="#007BFF" stroke="white" stroke-width="4" />
+      <circle cx="50" cy="50" r="35" fill="#007BFF" stroke="white" stroke-width="2" />
 
       <!-- Symbol: Hands forming a Heart -->
-      <path d="M40,40 Q50,30 60,40 Q70,50 50,70 Q30,50 40,40"
+      <path d="M40,45 Q50,35 60,45 Q70,55 50,75 Q30,55 46,44"
             fill="white" />
 
       <!-- Text: PUSON -->
-      <text x="80" y="45" font-family="Arial, sans-serif" font-size="24" fill="#007BFF" font-weight="bold">
+      <text x="100" y="50" font-family="'Gloria Hallelujah', cursive" font-size="34" fill="#007BFF" font-weight="bold">
         PUSON
       </text>
 
       <!-- Tagline: Posyandu Untuk Stunting Online -->
-      <text x="80" y="70" font-family="Arial, sans-serif" font-size="11" fill="#333" font-weight="normal">
+      <text x="100" y="75" font-family="Arial, sans-serif" font-size="14" fill="#333" font-weight="normal">
         Posyandu Untuk Stunting Online
       </text>
     </svg>

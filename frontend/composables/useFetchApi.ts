@@ -5,8 +5,8 @@ export default (url, options = {}) => {
         ...options,
         headers: {
             ...options.headers,
-            Authorization: `Bearer ${useAuthToken().value}`
+            Authorization: `Bearer ${useAuthToken().value}`,
         },
-        credentials: 'include'
+        credentials: 'include',
     })
 }

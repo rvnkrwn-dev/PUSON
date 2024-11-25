@@ -1,6 +1,8 @@
 import {jwtDecode} from "jwt-decode"
 
 export default () => {
+    const config = useRuntimeConfig();
+    const apiUrl = config.public.apiUrl;
     const useAuthToken = () => useState('auth_token')
     const useAuthUser = () => useState('auth_user')
     const useAuthLoading = () => useState('auth_loading', () => true)
@@ -24,7 +26,7 @@ export default () => {
     const login = ({ email, password }) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = await useFetchApi('https://puso-be.vercel.app/auth/login', {
+                const data = await useFetchApi(`${apiUrl}/auth/login`, {
                     method: 'POST',
                     body: {
                         email,

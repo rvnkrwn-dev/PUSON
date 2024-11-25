@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     plugins: ["~/plugins/preline.client.ts"],
     runtimeConfig: {
         public: {
-            apiUrl: "http://127.0.0.1:5000"
+            apiUrl: "https://puso-be.vercel.app"
         }
     }
 })
