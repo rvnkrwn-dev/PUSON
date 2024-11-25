@@ -47,7 +47,7 @@ export default () => {
     const refreshToken = () => {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = await useFetchApi('https://puso-be.vercel.app/auth/refresh', {
+                const data = await useFetchApi(`${apiUrl}/auth/refresh`, {
                     method: 'POST',
                 })
                 setToken(data.access_token)
@@ -62,7 +62,7 @@ export default () => {
     const getUser = () => {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = await useFetchApi('https://puso-be.vercel.app/auth/user')
+                const data = await useFetchApi(`${apiUrl}/auth/user`)
 
                 setUser(data.data)
                 resolve(true)
@@ -112,7 +112,7 @@ export default () => {
     const logout = () => {
         return new Promise(async (resolve, reject) => {
             try {
-                await useFetchApi('https://puso-be.vercel.app/auth/logout', {
+                await useFetchApi(`${apiUrl}/auth/logout`, {
                     method: 'POST'
                 })
 

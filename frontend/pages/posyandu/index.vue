@@ -131,6 +131,10 @@ import Swal from 'sweetalert2'
 import ModalFormAddPosyandu from "~/components/form/ModalFormAddPosyandu.vue";
 import { sleep } from "@antfu/utils";
 
+// config
+const config = useRuntimeConfig();
+const apiUrl = config.public.apiUrl;
+
 // Mendeklarasikan variabel state
 const searchQuery = ref(''); // Input pencarian
 const dataPosyandu = ref<any[]>([]); // Menyimpan data Posyandu dari API
@@ -141,7 +145,7 @@ const fetchPosyandu = async () => {
   try {
     isLoading.value = true; // Menandakan proses sedang berlangsung
     await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
-    const response = await useFetchApi('https://puso-be.vercel.app/auth/posyandu'); // Mengambil data posyandu
+    const response = await useFetchApi(`${apiUrl}/auth/posyandu`); // Mengambil data posyandu
     dataPosyandu.value = response ?? []; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
   } catch (err) {
     // Menampilkan alert error jika terjadi kesalahan saat mengambil data
@@ -188,7 +192,7 @@ const handleDelete = async (id: number) => {
     if (result.isConfirmed) {
       try {
         // Mengirim permintaan DELETE ke API untuk menghapus data
-        await useFetchApi(`https://puso-be.vercel.app/auth/posyandu/${id}`, {
+        await useFetchApi(`${apiUrl}/auth/posyandu/${id}`, {
           method: 'DELETE',
         });
 

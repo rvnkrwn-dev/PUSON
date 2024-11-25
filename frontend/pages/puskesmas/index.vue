@@ -132,6 +132,10 @@ import Swal from 'sweetalert2'
 import ModalFormAddPuskesmas from "~/components/form/ModalFormAddPuskesmas.vue";
 import { sleep } from "@antfu/utils";
 
+// config
+const config = useRuntimeConfig();
+const apiUrl = config.public.apiUrl;
+
 // Mendeklarasikan variabel state
 const searchQuery = ref(''); // Input pencarian
 const dataPuskesmas = ref<any[]>([]); // Menyimpan data Puskesmas dari API
@@ -142,7 +146,7 @@ const fetchPuskesmas = async () => {
   try {
     isLoading.value = true; // Menandakan proses sedang berlangsung
     await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
-    const response = await useFetchApi('https://puso-be.vercel.app/auth/puskesmas'); // Mengambil data puskesmas
+    const response = await useFetchApi(`${apiUrl}/auth/puskesmas`); // Mengambil data puskesmas
     dataPuskesmas.value = response ?? []; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
   } catch (err) {
     // Menampilkan alert error jika terjadi kesalahan saat mengambil data
@@ -191,7 +195,7 @@ const handleDelete = async (id: number) => {
     if (result.isConfirmed) {
       try {
         // Mengirim permintaan DELETE ke API untuk menghapus data
-        await useFetchApi(`https://puso-be.vercel.app/auth/puskesmas/${id}`, {
+        await useFetchApi(`${apiUrl}/auth/puskesmas/${id}`, {
           method: 'DELETE',
         });
 

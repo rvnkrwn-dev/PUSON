@@ -590,6 +590,10 @@ import {sleep} from "@antfu/utils";
 import BarChart from "~/components/chart/BarChart.vue";
 import AreaChart from "~/components/chart/AreaChart.vue";
 
+// config
+const config = useRuntimeConfig();
+const apiUrl = config.public.apiUrl;
+
 const stats = ref({
   "anak": {
     "lakiLaki": 0,
@@ -631,7 +635,7 @@ const fetchGraphAnak = async () => {
   try {
     await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
     // Fetch data from the API
-    const data = await useFetchApi('https://puso-be.vercel.app/auth/stats/grafik-anak');
+    const data = await useFetchApi(`${apiUrl}/auth/stats/grafik-anak`);
 
     // Initialize empty arrays for storing the processed data
     const lakiLakiData: number[] = [];
