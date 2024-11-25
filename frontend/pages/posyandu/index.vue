@@ -20,15 +20,24 @@
       <!-- Breadcrumb -->
       <ol class="ms-3 flex items-center whitespace-nowrap">
         <li class="flex items-center text-sm text-gray-800 dark:text-neutral-400">
-          Application Layout
+          PUSON
           <svg class="shrink-0 mx-3 overflow-visible size-2.5 text-gray-400 dark:text-neutral-500" width="16"
                height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 1L10.6869 7.16086C10.8637 7.35239 10.8637 7.64761 10.6869 7.83914L5 14" stroke="currentColor"
                   stroke-width="2" stroke-linecap="round"/>
           </svg>
         </li>
-        <li class="text-sm font-semibold text-gray-800 truncate dark:text-neutral-400" aria-current="page">
-          Dashboard
+        <li class="flex items-center text-sm text-gray-800 truncate dark:text-neutral-400">
+          <NuxtLink to="/">Dashboard</NuxtLink>
+          <svg class="shrink-0 mx-3 overflow-visible size-2.5 text-gray-400 dark:text-neutral-500" width="16"
+               height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 1L10.6869 7.16086C10.8637 7.35239 10.8637 7.64761 10.6869 7.83914L5 14" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </li>
+        <li class="flex items-center text-sm font-semibold text-gray-800 truncate dark:text-neutral-400"
+            aria-current="page">
+          Posyandu
         </li>
       </ol>
       <!-- End Breadcrumb -->
@@ -41,7 +50,7 @@
         <div class="-m-1.5 overflow-x-auto">
           <div class="p-1.5 min-w-full inline-block align-middle">
             <div class="border rounded-lg divide-y divide-gray-200 bg-white">
-              <div class="py-3 px-4">
+              <div class="py-3 px-4 flex justify-between gap-2">
                 <!-- Search Input -->
                 <div class="relative max-w-xs">
                   <label for="hs-table-search" class="sr-only">Search</label>
@@ -61,6 +70,8 @@
                     </svg>
                   </div>
                 </div>
+
+                <ModalFormAddPosyandu @posyanduAdded="handlePosyanduAdded"/>
               </div>
 
               <!-- Table -->
@@ -68,26 +79,42 @@
                 <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                   <tr>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Address
-                    </th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Phone</th>
-                    <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Nama Posyandu</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Alamat</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Nomor Telepon</th>
+                    <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Aksi</th>
                   </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-200">
                   <!-- Loop through filtered data -->
-                  <tr v-for="(item, index) in filteredData" :key="index">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ item.name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ item.address }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ item.phone }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                      <button type="button"
-                              class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
+                  <template v-if="filteredData.length > 0">
+                    <tr v-for="(item, index) in filteredData" :key="index">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ item.name }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ item.address }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ item.phone }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                        <button type="button"
+                                @click="handleDelete(item?.id)"
+                                class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">
+                          Hapus
+                        </button>
+                      </td>
+                    </tr>
+                  </template>
+                  <template v-else-if="isLoading">
+                    <tr>
+                      <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                        Memuat...
+                      </td>
+                    </tr>
+                  </template>
+                  <template v-else>
+                    <tr>
+                      <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                        Tidak ada data yang ditemukan.
+                      </td>
+                    </tr>
+                  </template>
                   </tbody>
                 </table>
               </div>
@@ -100,26 +127,38 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref} from 'vue';
-import {sleep} from '@antfu/utils';
+import Swal from 'sweetalert2'
+import ModalFormAddPosyandu from "~/components/form/ModalFormAddPosyandu.vue";
+import { sleep } from "@antfu/utils";
 
-// Declare state variables
-const searchQuery = ref(''); // Search query input
-const dataPosyandu = ref<any[]>([]); // API data
+// Mendeklarasikan variabel state
+const searchQuery = ref(''); // Input pencarian
+const dataPosyandu = ref<any[]>([]); // Menyimpan data Posyandu dari API
+const isLoading = ref<boolean>(false); // Status loading untuk menampilkan spinner
 
-// Fetch function
+// Fungsi untuk mengambil data posyandu dari API
 const fetchPosyandu = async () => {
   try {
-    await sleep(1000); // Simulate delay if server is slow
-    const response = await useFetchApi('https://puso-be.vercel.app/auth/posyandu');
-    dataPosyandu.value = response ?? []; // Assign fetched data
+    isLoading.value = true; // Menandakan proses sedang berlangsung
+    await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
+    const response = await useFetchApi('https://puso-be.vercel.app/auth/posyandu'); // Mengambil data posyandu
+    dataPosyandu.value = response ?? []; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
   } catch (err) {
-    console.error('Error fetching data: ', err);
-    alert('Gagal memuat data posyandu');
+    // Menampilkan alert error jika terjadi kesalahan saat mengambil data
+    await Swal.fire({
+      position: "bottom-end",
+      icon: "error",
+      title: "Gagal memuat data posyandu",
+      showConfirmButton: false,
+      timer: 1500,
+      toast: true
+    });
+  } finally {
+    isLoading.value = false; // Menandakan proses selesai, baik sukses maupun gagal
   }
 };
 
-// Computed property to filter data based on search query
+// Properti computed untuk memfilter data berdasarkan query pencarian
 const filteredData = computed(() => {
   return dataPosyandu.value.filter(item => {
     return item.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -128,12 +167,63 @@ const filteredData = computed(() => {
   });
 });
 
-// On component mounted, fetch data
+// Fungsi untuk menangani penambahan posyandu baru
+const handlePosyanduAdded = (newPosyandu: { name: string, address: string, phone: string }) => {
+  // Menambahkan posyandu baru ke dalam daftar yang ada
+  dataPosyandu.value.push(newPosyandu);
+}
+
+// Fungsi untuk menangani penghapusan posyandu
+const handleDelete = async (id: number) => {
+  Swal.fire({
+    title: "Anda yakin?",
+    text: "Anda tidak dapat mengembalikan ini!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    cancelButtonText: "Batal",
+    confirmButtonText: "Ya, hapus!"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        // Mengirim permintaan DELETE ke API untuk menghapus data
+        await useFetchApi(`https://puso-be.vercel.app/auth/posyandu/${id}`, {
+          method: 'DELETE',
+        });
+
+        // Menghapus data lokal setelah berhasil dihapus dari server
+        dataPosyandu.value = dataPosyandu.value.filter(item => item.id !== id);
+
+        // Menampilkan notifikasi sukses
+        await Swal.fire({
+          position: "bottom-end",
+          icon: "success",
+          title: "Sukses menghapus data posyandu",
+          showConfirmButton: false,
+          timer: 1500,
+          toast: true
+        });
+      } catch (err) {
+        // Menampilkan notifikasi error jika terjadi kesalahan
+        await Swal.fire({
+          position: "bottom-end",
+          icon: "error",
+          title: "Gagal menghapus data posyandu",
+          showConfirmButton: false,
+          timer: 1500,
+          toast: true
+        });
+      }
+    }
+  })
+}
+
+// Fungsi ini dipanggil saat komponen pertama kali dimuat untuk mengambil data posyandu
 onMounted(() => {
   fetchPosyandu();
 });
 </script>
 
-<style scoped>
-/* Scoped CSS can be added here */
+<style lang="css" scoped>
 </style>
