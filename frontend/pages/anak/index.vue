@@ -220,8 +220,8 @@ const handleDelete = async (id: number) => {
 }
 
 // Fungsi ini dipanggil saat komponen pertama kali dimuat untuk mengambil data anak
-onMounted(() => {
-  fetchAnak();
+onMounted(async () => {
+  await fetchAnak();
 });
 </script>
 

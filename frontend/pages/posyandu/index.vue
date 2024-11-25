@@ -220,8 +220,8 @@ const handleDelete = async (id: number) => {
 }
 
 // Fungsi ini dipanggil saat komponen pertama kali dimuat untuk mengambil data posyandu
-onMounted(() => {
-  fetchPosyandu();
+onMounted(async () => {
+  await fetchPosyandu();
 });
 </script>
 

@@ -137,7 +137,7 @@
                   <span
                       class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded shadow-sm"
                       role="tooltip">
-                    Gabungan laki dan perempuan
+                    {{ stats?.anak?.lakiLaki }} laki dan {{ stats?.anak?.perempuan }} perempuan
                   </span>
                 </div>
               </div>
@@ -162,10 +162,10 @@
           <div class="flex justify-between items-center">
             <div>
               <h2 class="text-sm text-gray-500">
-                Income
+                Stunting
               </h2>
               <p class="text-xl sm:text-2xl font-medium text-gray-800">
-                $126,238.49
+                30
               </p>
             </div>
 
@@ -184,7 +184,9 @@
           </div>
           <!-- End Header -->
 
-          <div id="hs-multiple-bar-charts"></div>
+          <div id="hs-multiple-bar-charts">
+            <BarChart :series="dataOfAreaChart??[]" :categories="monthsOfAreaChart??[]" :color="['#3347ff', '#d333ff']" />
+          </div>
         </div>
         <!-- End Card -->
 
@@ -195,10 +197,10 @@
           <div class="flex justify-between items-center">
             <div>
               <h2 class="text-sm text-gray-500">
-                Visitors
+                Anak
               </h2>
               <p class="text-xl sm:text-2xl font-medium text-gray-800">
-                80.3k
+                {{ stats?.anak?.total }}
               </p>
             </div>
 
@@ -217,7 +219,9 @@
           </div>
           <!-- End Header -->
 
-          <div id="hs-single-area-chart"></div>
+          <div id="hs-single-area-chart">
+            <AreaChart :series="dataOfAreaChart??[]" :categories="monthsOfAreaChart??[]" :color="['#3347ff', '#d333ff']" />
+          </div>
         </div>
         <!-- End Card -->
       </div>
@@ -583,6 +587,8 @@
 <script setup lang="ts">
 import Swal from 'sweetalert2'
 import {sleep} from "@antfu/utils";
+import BarChart from "~/components/chart/BarChart.vue";
+import AreaChart from "~/components/chart/AreaChart.vue";
 
 const stats = ref({
   "anak": {
@@ -617,8 +623,41 @@ const fetchStats = async () => {
   }
 }
 
-onMounted(() => {
-  fetchStats()
+const monthsOfAreaChart = ref<string[]>([]);  // To store the months (bulan)
+const dataOfAreaChart = ref<Array<{ name: string; data: number[] }>>([]);  // To store the series data (Laki-laki, Perempuan)
+
+// Function to fetch and process the data
+const fetchGraphAnak = async () => {
+  try {
+    await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
+    // Fetch data from the API
+    const data = await useFetchApi('https://puso-be.vercel.app/auth/stats/grafik-anak');
+
+    // Initialize empty arrays for storing the processed data
+    const lakiLakiData: number[] = [];
+    const perempuanData: number[] = [];
+
+    // Process the response data to fit the chart format
+    data.forEach((item: { bulan: string, jumlah_laki_laki: number, jumlah_perempuan: number }) => {
+      monthsOfAreaChart.value.push(item.bulan.slice(0, 3));  // Add month to categories
+      lakiLakiData.push(item.jumlah_laki_laki);  // Add jumlah_laki_laki to the series data
+      perempuanData.push(item.jumlah_perempuan);  // Add jumlah_perempuan to the series data
+    });
+
+    // Format chart data
+    dataOfAreaChart.value = [
+      { name: 'Laki-laki', data: lakiLakiData },
+      { name: 'Perempuan', data: perempuanData }
+    ];
+
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
+  }
+}
+
+onMounted(async () => {
+  await fetchStats()
+  await fetchGraphAnak()
 })
 </script>
 

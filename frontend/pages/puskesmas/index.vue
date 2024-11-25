@@ -223,8 +223,8 @@ const handleDelete = async (id: number) => {
 }
 
 // Fungsi ini dipanggil saat komponen pertama kali dimuat untuk mengambil data puskesmas
-onMounted(() => {
-  fetchPuskesmas();
+onMounted(async () => {
+  await fetchPuskesmas();
 });
 </script>
 
