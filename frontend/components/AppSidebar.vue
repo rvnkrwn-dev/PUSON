@@ -8,12 +8,9 @@
     bg-white border-e border-gray-200
     lg:block lg:translate-x-0 lg:end-auto lg:bottom-0" role="dialog" tabindex="-1" aria-label="Sidebar">
     <div class="relative flex flex-col h-full max-h-full">
-      <div class="px-6 pt-4">
+      <div class="px-4 pt-4">
         <!-- Logo -->
-        <NuxtLink to="/" class="flex-none rounded-xl text-xl inline-block font-bold text-blue-600 focus:outline-none focus:opacity-80"
-           aria-label="Puson">
-          PUSON
-        </NuxtLink>
+        <AppLogo />
         <!-- End Logo -->
       </div>
 

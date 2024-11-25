@@ -4,10 +4,7 @@
     <nav class="px-4 sm:px-6 flex basis-full items-center w-full mx-auto">
       <div class="me-5 lg:me-0 lg:hidden">
         <!-- Logo -->
-        <NuxtLink to="/" class="flex-none rounded-xl text-xl inline-block font-bold text-blue-600 focus:outline-none focus:opacity-80"
-                  aria-label="Puson">
-          PUSON
-        </NuxtLink>
+        <AppLogo />
         <!-- End Logo -->
       </div>
 
@@ -83,6 +80,7 @@
 
 <script setup lang="ts">
 import Swal from 'sweetalert2'
+import AppLogo from "~/components/AppLogo.vue";
 const {useAuthUser, logout} = useAuth()
 
 const user = computed(() => useAuthUser().value)

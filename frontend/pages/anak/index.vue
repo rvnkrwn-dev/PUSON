@@ -37,7 +37,7 @@
         </li>
         <li class="flex items-center text-sm font-semibold text-gray-800 truncate"
             aria-current="page">
-          Posyandu
+          Data Anak
         </li>
       </ol>
       <!-- End Breadcrumb -->
@@ -59,7 +59,7 @@
                       id="hs-table-search"
                       v-model="searchQuery"
                       class="py-2 px-3 ps-9 block w-full border border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                      placeholder="Search for Posyandu"
+                      placeholder="Search for Anak"
                   />
                   <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3">
                     <svg class="size-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -71,7 +71,7 @@
                   </div>
                 </div>
 
-                <ModalFormAddPosyandu @posyanduAdded="handlePosyanduAdded"/>
+                <ModalFormAddAnak @anakAdded="handleAnakAdded"/>
               </div>
 
               <!-- Table -->
@@ -79,9 +79,9 @@
                 <table class="min-w-full divide-y divide-gray-200">
                   <thead class="bg-gray-50">
                   <tr>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Nama Posyandu</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Alamat</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Nomor Telepon</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Nama Anak</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Umur</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Jenis Kelamin</th>
                     <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Aksi</th>
                   </tr>
                   </thead>
@@ -89,9 +89,9 @@
                   <!-- Loop through filtered data -->
                   <template v-if="filteredData.length > 0">
                     <tr v-for="(item, index) in filteredData" :key="index">
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ item.name }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ item.address }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ item.phone }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ item?.name }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ item?.age }}</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ item?.gender === 'male' ? 'Laki-laki' : 'Perempuan' }}</td>
                       <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                         <button type="button"
                                 @click="handleDelete(item?.id)"
@@ -128,27 +128,27 @@
 
 <script setup lang="ts">
 import Swal from 'sweetalert2'
-import ModalFormAddPosyandu from "~/components/form/ModalFormAddPosyandu.vue";
+import ModalFormAddAnak from "~/components/form/ModalFormAddAnak.vue";
 import { sleep } from "@antfu/utils";
 
 // Mendeklarasikan variabel state
 const searchQuery = ref(''); // Input pencarian
-const dataPosyandu = ref<any[]>([]); // Menyimpan data Posyandu dari API
+const dataAnak = ref<any[]>([]); // Menyimpan data anak dari API
 const isLoading = ref<boolean>(false); // Status loading untuk menampilkan spinner
 
-// Fungsi untuk mengambil data posyandu dari API
-const fetchPosyandu = async () => {
+// Fungsi untuk mengambil data anak dari API
+const fetchAnak = async () => {
   try {
     isLoading.value = true; // Menandakan proses sedang berlangsung
     await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
-    const response = await useFetchApi('https://puso-be.vercel.app/auth/posyandu'); // Mengambil data posyandu
-    dataPosyandu.value = response ?? []; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
+    const response = await useFetchApi('https://puso-be.vercel.app/auth/anak'); // Mengambil data anak
+    dataAnak.value = response ?? []; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
   } catch (err) {
     // Menampilkan alert error jika terjadi kesalahan saat mengambil data
     await Swal.fire({
       position: "bottom-end",
       icon: "error",
-      title: "Gagal memuat data posyandu",
+      title: "Gagal memuat data anak",
       showConfirmButton: false,
       timer: 1500,
       toast: true
@@ -160,20 +160,20 @@ const fetchPosyandu = async () => {
 
 // Properti computed untuk memfilter data berdasarkan query pencarian
 const filteredData = computed(() => {
-  return dataPosyandu.value.filter(item => {
+  return dataAnak.value.filter(item => {
     return item.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        item.address.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        item.phone.toLowerCase().includes(searchQuery.value.toLowerCase());
+        item.age.toString().includes(searchQuery.value.toLowerCase()) ||
+        item.gender.toLowerCase().includes(searchQuery.value.toLowerCase());
   });
 });
 
-// Fungsi untuk menangani penambahan posyandu baru
-const handlePosyanduAdded = (newPosyandu: { name: string, address: string, phone: string }) => {
-  // Menambahkan posyandu baru ke dalam daftar yang ada
-  dataPosyandu.value.push(newPosyandu);
+// Fungsi untuk menangani penambahan anak baru
+const handleAnakAdded = (newAnak) => {
+  // Menambahkan anak baru ke dalam daftar yang ada
+  dataAnak.value.push(newAnak);
 }
 
-// Fungsi untuk menangani penghapusan posyandu
+// Fungsi untuk menangani penghapusan anak
 const handleDelete = async (id: number) => {
   Swal.fire({
     title: "Anda yakin?",
@@ -188,18 +188,18 @@ const handleDelete = async (id: number) => {
     if (result.isConfirmed) {
       try {
         // Mengirim permintaan DELETE ke API untuk menghapus data
-        await useFetchApi(`https://puso-be.vercel.app/auth/posyandu/${id}`, {
+        await useFetchApi(`https://puso-be.vercel.app/auth/anak/${id}`, {
           method: 'DELETE',
         });
 
         // Menghapus data lokal setelah berhasil dihapus dari server
-        dataPosyandu.value = dataPosyandu.value.filter(item => item.id !== id);
+        dataAnak.value = dataAnak.value.filter(item => item.id !== id);
 
         // Menampilkan notifikasi sukses
         await Swal.fire({
           position: "bottom-end",
           icon: "success",
-          title: "Sukses menghapus data posyandu",
+          title: "Sukses menghapus data anak",
           showConfirmButton: false,
           timer: 1500,
           toast: true
@@ -209,7 +209,7 @@ const handleDelete = async (id: number) => {
         await Swal.fire({
           position: "bottom-end",
           icon: "error",
-          title: "Gagal menghapus data posyandu",
+          title: "Gagal menghapus data anak",
           showConfirmButton: false,
           timer: 1500,
           toast: true
@@ -219,9 +219,9 @@ const handleDelete = async (id: number) => {
   })
 }
 
-// Fungsi ini dipanggil saat komponen pertama kali dimuat untuk mengambil data posyandu
+// Fungsi ini dipanggil saat komponen pertama kali dimuat untuk mengambil data anak
 onMounted(() => {
-  fetchPosyandu();
+  fetchAnak();
 });
 </script>
 

@@ -3,7 +3,8 @@
     <div class="w-full max-w-md mx-auto p-6">
       <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
         <div class="p-4 sm:p-7">
-          <div class="text-center">
+          <div class="text-center flex gap-2 items-center justify-center">
+            <AppLogo class="transform scale-20"/>
             <h1 class="block text-2xl font-bold text-gray-800">Masuk</h1>
           </div>
           <div class="mt-8">
@@ -24,8 +25,10 @@
                 <div>
                   <div class="flex justify-between items-center">
                     <label for="password" class="block text-sm mb-2">Kata sandi</label>
-                    <NuxtLink class="inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium"
-                       to="/forget-password">Lupa kata sandi?</NuxtLink>
+                    <NuxtLink
+                        class="inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium"
+                        to="/forget-password">Lupa kata sandi?
+                    </NuxtLink>
                   </div>
                   <div class="relative">
                     <input v-model="password" type="password" id="password" name="password"
@@ -46,7 +49,7 @@
                 <button type="submit"
                         class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
                         :disabled="isSubmitting">
-                  {{ isLoading? 'Tunggu...' : 'Masuk' }}
+                  {{ isLoading ? 'Tunggu...' : 'Masuk' }}
                 </button>
               </div>
             </form>
