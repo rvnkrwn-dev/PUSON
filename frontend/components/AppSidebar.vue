@@ -2,7 +2,7 @@
   <div id="hs-application-sidebar" class="hs-overlay  [--auto-close:lg]
     hs-overlay-open:translate-x-0
     -translate-x-full transition-all duration-300 transform
-    w-[260px] h-full
+    w-[260px] h-[100dvh]
     hidden
     fixed inset-y-0 start-0 z-[60]
     bg-white border-e border-gray-200
@@ -10,7 +10,7 @@
     <div class="relative flex flex-col h-full max-h-full">
       <div class="px-6 pt-4">
         <!-- Logo -->
-        <NuxtLink to="/" class="flex-none rounded-xl text-xl inline-block font-bold text-blue-600 focus:outline-none focus:opacity-80" href="#"
+        <NuxtLink to="/" class="flex-none rounded-xl text-xl inline-block font-bold text-blue-600 focus:outline-none focus:opacity-80"
            aria-label="Puson">
           PUSON
         </NuxtLink>

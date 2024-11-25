@@ -4,6 +4,7 @@ export default () => {
     const useAuthToken = () => useState('auth_token')
     const useAuthUser = () => useState('auth_user')
     const useAuthLoading = () => useState('auth_loading', () => true)
+    const isLoggedIn = () => useCookie('isLoggedIn')
 
     const setToken = (newToken) => {
         const authToken = useAuthToken()
@@ -33,7 +34,7 @@ export default () => {
 
                 setToken(data.access_token)
                 setUser(data.user)
-                useCookie('isLoggedIn').value = true
+                isLoggedIn().value = true
                 resolve(true)
             } catch (error) {
                 reject(error)
@@ -64,7 +65,6 @@ export default () => {
                 setUser(data.data)
                 resolve(true)
             } catch (error) {
-                await logout()
                 reject(error)
             }
         })
@@ -91,6 +91,7 @@ export default () => {
         return new Promise(async (resolve, reject) => {
             setIsAuthLoading(true)
             try {
+                if (!isLoggedIn().value) return
                 await refreshToken()
                 await getUser()
 
@@ -115,9 +116,10 @@ export default () => {
 
                 setToken(null)
                 setUser(null)
-                useCookie('isLoggedIn').value = ''
+                isLoggedIn().value = false
                 resolve(true)
             } catch (error) {
+                isLoggedIn().value = false
                 reject(error)
             }
         })
@@ -129,6 +131,7 @@ export default () => {
         useAuthToken,
         initAuth,
         useAuthLoading,
-        logout
+        logout,
+        isLoggedIn
     }
 }

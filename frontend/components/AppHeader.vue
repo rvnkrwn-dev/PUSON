@@ -4,7 +4,7 @@
     <nav class="px-4 sm:px-6 flex basis-full items-center w-full mx-auto">
       <div class="me-5 lg:me-0 lg:hidden">
         <!-- Logo -->
-        <NuxtLink to="/" class="flex-none rounded-xl text-xl inline-block font-bold text-blue-600 focus:outline-none focus:opacity-80" href="#"
+        <NuxtLink to="/" class="flex-none rounded-xl text-xl inline-block font-bold text-blue-600 focus:outline-none focus:opacity-80"
                   aria-label="Puson">
           PUSON
         </NuxtLink>
@@ -62,14 +62,14 @@
                 class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
                 role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-account">
               <div class="py-3 px-5 bg-gray-100 rounded-t-lg">
-                <p class="text-sm text-gray-500">Signed in as</p>
-                <p class="text-sm font-medium text-gray-800">{{ user?.email }}</p>
+                <p class="text-sm text-gray-500">Masuk sebagai</p>
+                <p class="text-sm font-medium text-gray-800">{{ user?.full_name }}</p>
               </div>
               <div class="p-1.5 space-y-0.5">
                 <NuxtLink class="cursor-pointer flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
                    @click="handleLogout">
                   <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M4 12a1 1 0 0 0 1 1h7.59l-2.3 2.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l4-4a1 1 0 0 0 .21-.33a1 1 0 0 0 0-.76a1 1 0 0 0-.21-.33l-4-4a1 1 0 1 0-1.42 1.42l2.3 2.29H5a1 1 0 0 0-1 1M17 2H7a3 3 0 0 0-3 3v3a1 1 0 0 0 2 0V5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-3a1 1 0 0 0-2 0v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3"/></svg>
-                  Sign Out
+                  Keluar
                 </NuxtLink>
               </div>
             </div>
@@ -82,32 +82,46 @@
 </template>
 
 <script setup lang="ts">
+import Swal from 'sweetalert2'
 const {useAuthUser, logout} = useAuth()
 
 const user = computed(() => useAuthUser().value)
 
-onMounted(() => {
-  console.log(user.value)
-})
-
 const handleLogout = async () => {
-  const confirmLogout = confirm("Apakah Anda yakin ingin logout?");
-  if (!confirmLogout) return; // Jika pengguna membatalkan, keluar dari fungsi
+  Swal.fire({
+    title: "Anda yakin?",
+    text: "Anda ingin keluar dari sini!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    cancelButtonText: "Batal",
+    confirmButtonText: "Ya, Keluar!"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        // Memanggil fungsi logout dari useAuth
+        await logout();
 
-  try {
-    // Memanggil fungsi logout dari useAuth
-    await logout();
+        // Redirect atau tindakan lain setelah logout berhasil
+        return await navigateTo('/login')
+      } catch (error) {
+        await Swal.fire({
+          position: "bottom-end",
+          icon: "error",
+          title: "Terjadi kesalahan saat logout.",
+          showConfirmButton: false,
+          timer: 1500,
+          toast: true
+        });
+      } finally {
 
-    // Redirect atau tindakan lain setelah logout berhasil
-    alert('Anda telah berhasil logout.');
-    window.location.href = '/login'; // Redirect ke halaman login atau halaman lain
-  } catch (error) {
-    console.error('Gagal logout:', error);
-    alert('Terjadi kesalahan saat logout.');
-  }
+      }
+    }
+  });
 };
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 
 </style>

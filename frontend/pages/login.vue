@@ -12,12 +12,11 @@
               <div class="grid gap-y-4">
                 <!-- Email Input -->
                 <div>
-                  <label for="email" class="block text-sm mb-2">Email</label>
+                  <label for="email" class="block text-sm mb-2">Alamat surel</label>
                   <div class="relative">
                     <input v-model="email" type="email" id="email" name="email"
                            class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
                            required aria-describedby="email-error" :class="{'border-red-500': emailError}">
-                    <p v-if="emailError" class="text-xs text-red-600 mt-2" id="email-error">{{ emailError }}</p>
                   </div>
                 </div>
 
@@ -25,16 +24,13 @@
                 <div>
                   <div class="flex justify-between items-center">
                     <label for="password" class="block text-sm mb-2">Kata sandi</label>
-                    <a class="inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium"
-                       href="/forget-password">Lupa kata sandi?</a>
+                    <NuxtLink class="inline-flex items-center gap-x-1 text-sm text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium"
+                       to="/forget-password">Lupa kata sandi?</NuxtLink>
                   </div>
                   <div class="relative">
                     <input v-model="password" type="password" id="password" name="password"
                            class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
                            required aria-describedby="password-error" :class="{'border-red-500': passwordError}">
-                    <p v-if="passwordError" class="text-xs text-red-600 mt-2" id="password-error">{{
-                        passwordError
-                      }}</p>
                   </div>
                 </div>
 
@@ -50,7 +46,7 @@
                 <button type="submit"
                         class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
                         :disabled="isSubmitting">
-                  Masuk
+                  {{ isLoading? 'Tunggu...' : 'Masuk' }}
                 </button>
               </div>
             </form>
@@ -60,7 +56,7 @@
               Belum punya akun?
               <NuxtLink
                   class="text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium"
-                  href="/register">
+                  to="/register">
                 Daftar disini
               </NuxtLink>
             </p>
@@ -83,6 +79,7 @@ const rememberMe = ref<boolean>(false)
 const emailError = ref<string | null>(null)
 const passwordError = ref<string | null>(null)
 const isSubmitting = ref<boolean>(false)
+const isLoading = ref<boolean>(false)
 
 const {login} = useAuth()
 
@@ -90,22 +87,44 @@ const handleSubmit = async () => {
   // Reset errors
   emailError.value = null
   passwordError.value = null
+  isLoading.value = true
 
   // Validate fields
   if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
     emailError.value = "Please enter a valid email address."
-    return
+    return await Swal.fire({
+      position: "bottom-end",
+      icon: "error",
+      title: emailError.value,
+      showConfirmButton: false,
+      timer: 1500,
+      toast: true
+    });
   }
 
   if (!password.value || password.value.length < 8) {
     passwordError.value = "Password must be at least 8 characters."
-    return
+    return await Swal.fire({
+      position: "bottom-end",
+      icon: "error",
+      title: passwordError.value,
+      showConfirmButton: false,
+      timer: 1500,
+      toast: true
+    });
   }
 
   isSubmitting.value = true
 
   try {
     await login({email: email.value, password: password.value})
+    if (rememberMe.value) {
+      localStorage.setItem('rememberMe', JSON.stringify({
+        user: email.value,
+      }))
+    } else {
+      localStorage.setItem('rememberMe', null)
+    }
     return navigateTo('/')
   } catch (error) {
     await Swal.fire({
@@ -118,10 +137,24 @@ const handleSubmit = async () => {
     });
   } finally {
     isSubmitting.value = false
+    isLoading.value = false
   }
 }
+
+
+const getUserRememberMe = () => {
+  const data = JSON.parse(localStorage.getItem('rememberMe'));
+  if (data !== null) {
+    email.value = data?.user
+    rememberMe.value = !!data?.user
+  }
+}
+
+onMounted(() => {
+  getUserRememberMe()
+})
 </script>
 
 <style scoped>
-/* You can add additional styling here if necessary */
+
 </style>

@@ -46,6 +46,7 @@
                       id="password"
                       v-model="password"
                       class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
+                      :class="!passwordIsSame ? 'border-red-500' : ''"
                       placeholder="Masukkan kata sandi"
                       required
                   />
@@ -59,6 +60,7 @@
                       id="confirm_password"
                       v-model="confirmPassword"
                       class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500"
+                      :class="!passwordIsSame ? 'border-red-500' : ''"
                       placeholder="Ulangi kata sandi"
                       required
                   />
@@ -82,14 +84,11 @@
                 <!-- Submit Button -->
                 <button
                     type="submit"
-                    :disabled="!termsAccepted || loading"
+                    :disabled="!termsAccepted || loading || !passwordIsSame"
                     class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
                 >
                   {{ loading ? 'Loading...' : 'Daftar' }}
                 </button>
-
-                <!-- Error Message -->
-                <p v-if="errorMessage" class="text-xs text-red-600 mt-2">{{ errorMessage }}</p>
               </div>
             </form>
             <!-- End Form -->
@@ -119,16 +118,17 @@ const password = ref("");
 const confirmPassword = ref("");
 const termsAccepted = ref(false);
 const loading = ref(false);
-const errorMessage = ref("");
+const passwordIsSame = ref(true)
 
 const handleRegister = async () => {
   if (password.value !== confirmPassword.value) {
-    errorMessage.value = "Kata sandi tidak cocok.";
+    passwordIsSame.value = false
     return;
+  } else {
+    passwordIsSame.value = true
   }
 
   loading.value = true;
-  errorMessage.value = "";
 
   try {
     const response = await useFetchApi(
@@ -144,23 +144,22 @@ const handleRegister = async () => {
         }
     );
 
-    console.log(response);
-
 
     await Swal.fire({
-      position: "bottom-end",
-      icon: "error",
-      title: "Successfully registered",
+      position: "top-end",
+      icon: "success",
+      title: "Berhasil mendaftar!",
       showConfirmButton: false,
       timer: 1500,
       toast: true
     });
+
+    return navigateTo('/')
   } catch (error) {
-    errorMessage.value = error.message;
     await Swal.fire({
-      position: "bottom-end",
+      position: "top-end",
       icon: "error",
-      title: errorMessage.value || "Successfully registered",
+      title: "Gagal untuk mendaftar!",
       showConfirmButton: false,
       timer: 1500,
       toast: true
@@ -170,7 +169,3 @@ const handleRegister = async () => {
   }
 };
 </script>
-
-<style scoped>
-/* Tambahkan styling custom di sini jika diperlukan */
-</style>

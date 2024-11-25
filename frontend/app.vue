@@ -1,8 +1,8 @@
 <template>
   <div>
-    <NuxtLoadingIndicator />
+    <NuxtLoadingIndicator/>
     <NuxtLayout>
-      <NuxtPage />
+      <NuxtPage/>
     </NuxtLayout>
   </div>
 </template>
@@ -10,7 +10,7 @@
 <script setup lang="ts">
 const {initAuth} = useAuth()
 
-onBeforeMount(async () => {
-  await initAuth()
+onBeforeMount(() => {
+  initAuth()
 })
 </script>
