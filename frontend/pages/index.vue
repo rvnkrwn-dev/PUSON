@@ -184,8 +184,14 @@
           </div>
           <!-- End Header -->
 
-          <div id="hs-multiple-bar-charts">
+          <div id="hs-multiple-bar-charts" class="h-full w-full">
             <BarChart v-if="monthsOfBarChart.length > 0" :series="dataOfBarChart??[]" :categories="monthsOfBarChart??[]" :color="['#3347ff', '#d333ff']" />
+            <div v-else-if="isLoadingBarChart" class="h-full w-full flex flex-col items-center justify-center">
+              <p class="text-gray-500">Memuat...</p>
+            </div>
+            <div v-else class="h-full w-full flex flex-col items-center justify-center">
+              <p class="text-gray-500">Tidak ada data</p>
+            </div>
           </div>
         </div>
         <!-- End Card -->
@@ -219,8 +225,14 @@
           </div>
           <!-- End Header -->
 
-          <div id="hs-single-area-chart">
+          <div id="hs-single-area-chart" class="h-full w-full">
             <AreaChart v-if="monthsOfAreaChart.length > 0" :series="dataOfAreaChart??[]" :categories="monthsOfAreaChart??[]" :color="['#3347ff', '#d333ff']" />
+            <div v-else-if="isLoadingAreaChart" class="h-full w-full flex flex-col items-center justify-center">
+              <p class="text-gray-500">Memuat...</p>
+            </div>
+            <div v-else class="h-full w-full flex flex-col items-center justify-center">
+              <p class="text-gray-500">Tidak ada data</p>
+            </div>
           </div>
         </div>
         <!-- End Card -->
@@ -278,13 +290,16 @@ const fetchStats = async () => {
 
 const monthsOfAreaChart = ref<string[]>([]);  // To store the months (bulan)
 const dataOfAreaChart = ref<Array<{ name: string, data: number[] }>>([]);  // To store the series data (Laki-laki, Perempuan)
+const isLoadingAreaChart = ref<boolean>(true)
 
 const monthsOfBarChart = ref<string[]>([]);  // To store the months (bulan)
 const dataOfBarChart = ref<Array<{ name: string, data: number[] }>>([]);  // To store the series data (Laki-laki, Perempuan)
+const isLoadingBarChart = ref<boolean>(true)
 
 // Function to fetch and process the data
 const fetchGraphAnak = async () => {
   try {
+    isLoadingAreaChart.value = true;
     await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
     // Fetch data from the API
     const data = await useFetchApi(`${apiUrl}/auth/stats/grafik-anak`);
@@ -308,11 +323,14 @@ const fetchGraphAnak = async () => {
 
   } catch (error) {
     console.error('Failed to fetch data:', error);
+  } finally {
+    isLoadingAreaChart.value = false;
   }
 }
 
 const fetchGraphStunting = async () => {
   try {
+    isLoadingBarChart.value = true;
     await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
     // Fetch data from the API
     const data = await useFetchApi(`${apiUrl}/auth/stats/grafik-stunting`);
@@ -332,6 +350,8 @@ const fetchGraphStunting = async () => {
     ];
   } catch (error) {
     console.error('Failed to fetch data:', error);
+  } finally {
+    isLoadingBarChart.value = false;
   }
 }
 
