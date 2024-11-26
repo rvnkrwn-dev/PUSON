@@ -185,7 +185,7 @@
           <!-- End Header -->
 
           <div id="hs-multiple-bar-charts">
-            <BarChart :series="dataOfAreaChart??[]" :categories="monthsOfAreaChart??[]" :color="['#3347ff', '#d333ff']" />
+            <BarChart :series="dataOfBarChart??[]" :categories="monthsOfBarChart??[]" :color="['#3347ff', '#d333ff']" />
           </div>
         </div>
         <!-- End Card -->
@@ -628,7 +628,10 @@ const fetchStats = async () => {
 }
 
 const monthsOfAreaChart = ref<string[]>([]);  // To store the months (bulan)
-const dataOfAreaChart = ref<Array<{ name: string; data: number[] }>>([]);  // To store the series data (Laki-laki, Perempuan)
+const dataOfAreaChart = ref<Array<{ name: string, data: number[] }>>([]);  // To store the series data (Laki-laki, Perempuan)
+
+const monthsOfBarChart = ref<string[]>([]);  // To store the months (bulan)
+const dataOfBarChart = ref<Array<{ name: string, data: number[] }>>([]);  // To store the series data (Laki-laki, Perempuan)
 
 // Function to fetch and process the data
 const fetchGraphAnak = async () => {
@@ -659,9 +662,34 @@ const fetchGraphAnak = async () => {
   }
 }
 
+const fetchGraphStunting = async () => {
+  try {
+    await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
+    // Fetch data from the API
+    const data = await useFetchApi(`${apiUrl}/auth/stats/grafik-stunting`);
+
+    // Initialize empty arrays for storing the processed data
+    const dataTotal: number[] = [];
+
+    // Process the response data to fit the chart format
+    data.forEach((item: { bulan: string, total: number }) => {
+      monthsOfBarChart.value.push(item.bulan.slice(0, 3));
+      dataTotal.push(item.total);  // Add total to the series data
+    });
+
+    // Format chart data
+    dataOfBarChart.value = [
+      { name: 'Total', data: dataTotal },
+    ];
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
+  }
+}
+
 onMounted(async () => {
   await fetchStats()
   await fetchGraphAnak()
+  await fetchGraphStunting()
 })
 </script>
 
