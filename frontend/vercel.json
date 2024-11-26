@@ -12,22 +12,6 @@
           "value": "nosniff"
         }
       ]
-    },
-    {
-      "source": "/.well-known/acme-challenge/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://puson.zedis.live"
-        }
-      ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "https://puson.zedis.live/",
-      "permanent": true
     }
   ]
 }
