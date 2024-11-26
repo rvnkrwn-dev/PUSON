@@ -10,5 +10,13 @@ export default defineNuxtConfig({
         public: {
             apiUrl: "https://puso-be.vercel.app"
         }
+    },
+    app: {
+        head: {
+            title: "PUSON | Posyandu Untuk Stunting Online",
+            htmlAttrs: {
+                lang: 'id'
+            }
+        }
     }
 })
