@@ -10,12 +10,12 @@
             fill="white" />
 
       <!-- Text: PUSON -->
-      <text x="100" y="50" font-family="'Gloria Hallelujah', cursive" font-size="34" fill="#007BFF" font-weight="bold">
+      <text x="100" y="52" font-family="'Gloria Hallelujah', cursive" font-size="30" fill="#007BFF" font-weight="bold">
         PUSON
       </text>
 
       <!-- Tagline: Posyandu Untuk Stunting Online -->
-      <text x="100" y="75" font-family="Arial, sans-serif" font-size="14" fill="#333" font-weight="normal">
+      <text x="100" y="72" font-family="Arial, sans-serif" font-size="14" fill="#333" font-weight="normal">
         Posyandu Untuk Stunting Online
       </text>
     </svg>
@@ -29,10 +29,4 @@
 
 <style lang="css" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap');
-
-.gloria-hallelujah-regular {
-  font-family: "Gloria Hallelujah", cursive;
-  font-weight: 600;
-  font-style: normal;
-}
 </style>

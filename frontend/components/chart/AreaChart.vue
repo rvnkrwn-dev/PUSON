@@ -88,7 +88,7 @@ const computedChartOptions = computed(() => ({
       formatter: (title: string) => {
         let t = title;
         if (t) {
-          const newT = t.split(" ");
+          const newT = t?.split(" ");
           t = `${newT[0].length > 3 ? newT[0].slice(0,3) : newT[0]} ${newT[1]?.slice(0, 3)?? ""}`;
         }
         return t;
