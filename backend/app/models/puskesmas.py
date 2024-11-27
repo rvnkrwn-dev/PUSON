@@ -4,30 +4,33 @@ from .. import db
 
 
 class Puskesmas(db.Model):
-    __tablename__ = "puskesmas"
+    __tablename__ = "puskesmas"  # Nama tabel di database
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(100), nullable=False)
-    address = Column(String(255), nullable=False)
-    phone = Column(String(20), nullable=False)
-    created_at = Column(DateTime, default=func.current_timestamp())
+    id = Column(Integer, primary_key=True, autoincrement=True)  # ID puskesmas, sebagai primary key dan auto-increment
+    name = Column(String(100), nullable=False)  # Nama puskesmas
+    address = Column(String(255), nullable=False)  # Alamat puskesmas
+    phone = Column(String(20), nullable=False)  # Nomor telepon puskesmas
+    created_at = Column(DateTime, default=func.current_timestamp())  # Waktu pembuatan catatan
     updated_at = Column(
-        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
+        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()  # Waktu pembaruan catatan
     )
 
 
 def create_puskesmas(name, address, phone):
-    new_puskesmas = Puskesmas(name=name, address=address, phone=phone)
-    db.session.add(new_puskesmas)
-    db.session.commit()
-    return new_puskesmas
+    # Fungsi untuk membuat puskesmas baru
+    new_puskesmas = Puskesmas(name=name, address=address, phone=phone)  # Membuat objek Puskesmas baru
+    db.session.add(new_puskesmas)  # Menambahkan objek Puskesmas ke sesi
+    db.session.commit()  # Menyimpan perubahan ke database
+    return new_puskesmas  # Mengembalikan objek Puskesmas yang baru dibuat
 
 
 def update_puskesmas(id, data):
-    puskesmas = db.session.query(Puskesmas).get(id)
+    # Fungsi untuk memperbarui data puskesmas berdasarkan ID
+    puskesmas = db.session.query(Puskesmas).get(id)  # Mencari puskesmas berdasarkan ID
     if not puskesmas:
-        return None
+        return None  # Mengembalikan None jika puskesmas tidak ditemukan
 
+    # Memperbarui atribut puskesmas dengan data baru jika ada
     if "name" in data:
         puskesmas.name = data["name"]
     if "address" in data:
@@ -35,19 +38,21 @@ def update_puskesmas(id, data):
     if "phone" in data:
         puskesmas.phone = data["phone"]
 
-    db.session.commit()
-    return puskesmas
+    db.session.commit()  # Menyimpan perubahan ke database
+    return puskesmas  # Mengembalikan objek Puskesmas yang diperbarui
 
 
 def delete_puskesmas(id):
-    puskesmas = db.session.query(Puskesmas).get(id)
+    # Fungsi untuk menghapus puskesmas berdasarkan ID
+    puskesmas = db.session.query(Puskesmas).get(id)  # Mencari puskesmas berdasarkan ID
     if not puskesmas:
-        return False
+        return False  # Mengembalikan False jika puskesmas tidak ditemukan
 
-    db.session.delete(puskesmas)
-    db.session.commit()
-    return True
+    db.session.delete(puskesmas)  # Menghapus puskesmas dari sesi
+    db.session.commit()  # Menyimpan perubahan ke database
+    return True  # Mengembalikan True jika penghapusan berhasil
 
 
 def get_puskesmas_list():
-    return db.session.query(Puskesmas).all()
+    # Fungsi untuk mendapatkan semua puskesmas dari database
+    return db.session.query(Puskesmas).all()  # Mengembalikan semua catatan puskesmas

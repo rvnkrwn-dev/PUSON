@@ -6,3 +6,4 @@ Werkzeug
 SQLAlchemy
 pymysql
 python-dotenv
+pandas

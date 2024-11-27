@@ -5,33 +5,36 @@ from .. import db
 
 
 class Anak(db.Model):
-    __tablename__ = "anak"
+    __tablename__ = "anak"  # Nama tabel di database
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(100), nullable=False)
-    age = Column(Integer, nullable=False)
-    gender = Column(Enum("male", "female"), nullable=False)
-    posyandu_id = Column(Integer, ForeignKey("posyandu.id"), nullable=True)
-    created_at = Column(DateTime, default=func.current_timestamp())
+    id = Column(Integer, primary_key=True, autoincrement=True)  # ID anak, primary key
+    name = Column(String(100), nullable=False)  # Nama anak
+    age = Column(Integer, nullable=False)  # Usia anak
+    gender = Column(Enum("male", "female"), nullable=False)  # Jenis kelamin anak
+    posyandu_id = Column(Integer, ForeignKey("posyandu.id"), nullable=True)  # ID posyandu yang terkait
+    created_at = Column(DateTime, default=func.current_timestamp())  # Waktu pembuatan catatan
     updated_at = Column(
-        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
+        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()  # Waktu pembaruan catatan
     )
 
-    posyandu = relationship("Posyandu")
+    posyandu = relationship("Posyandu")  # Relasi dengan model Posyandu
 
 
 def register_anak(name, age, gender, posyandu_id):
-    anak = Anak(name=name, age=age, gender=gender, posyandu_id=posyandu_id)
-    db.session.add(anak)
-    db.session.commit()
-    return anak
+    # Fungsi untuk mendaftarkan anak baru
+    anak = Anak(name=name, age=age, gender=gender, posyandu_id=posyandu_id)  # Membuat objek Anak
+    db.session.add(anak)  # Menambahkan objek Anak ke sesi
+    db.session.commit()  # Menyimpan perubahan ke database
+    return anak  # Mengembalikan objek Anak yang baru dibuat
 
 
 def update_anak(id, data):
-    anak = db.session.query(Anak).get(id)
+    # Fungsi untuk memperbarui data anak berdasarkan ID
+    anak = db.session.query(Anak).get(id)  # Mencari anak berdasarkan ID
     if not anak:
-        return None
+        return None  # Mengembalikan None jika anak tidak ditemukan
 
+    # Memperbarui atribut anak dengan data baru jika ada
     if "name" in data:
         anak.name = data["name"]
     if "age" in data:
@@ -41,23 +44,16 @@ def update_anak(id, data):
     if "posyandu_id" in data:
         anak.posyandu_id = data["posyandu_id"]
 
-    db.session.commit()
-    return anak
+    db.session.commit()  # Menyimpan perubahan ke database
+    return anak  # Mengembalikan objek Anak yang diperbarui
 
 
 def delete_anak(id):
-    anak = db.session.query(Anak).get(id)
+    # Fungsi untuk menghapus anak berdasarkan ID
+    anak = db.session.query(Anak).get(id)  # Mencari anak berdasarkan ID
     if not anak:
-        return False
+        return False  # Mengembalikan False jika anak tidak ditemukan
 
-    db.session.delete(anak)
-    db.session.commit()
-    return True
-
-
-def get_pemeriksaan_history(posyandu_id):
-    return db.session.query(Pemeriksaan).filter_by(posyandu_id=posyandu_id).all()
-
-
-def get_stunting_history(anak_id):
-    return db.session.query(Stunting).filter_by(anak_id=anak_id).all()
+    db.session.delete(anak)  # Menghapus anak dari sesi
+    db.session.commit()  # Menyimpan perubahan ke database
+    return True  # Mengembalikan True jika penghapusan berhasil

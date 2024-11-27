@@ -5,38 +5,41 @@ from .. import db
 
 
 class Stunting(db.Model):
-    __tablename__ = "stunting"
+    __tablename__ = "stunting"  # Nama tabel di database
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    anak_id = Column(Integer, ForeignKey("anak.id"), nullable=False)
-    date = Column(Date, nullable=False)
-    height = Column(DECIMAL(5, 2), nullable=False)
-    weight = Column(DECIMAL(5, 2), nullable=False)
-    created_at = Column(DateTime, default=func.current_timestamp())
+    id = Column(Integer, primary_key=True, autoincrement=True)  # ID stunting, sebagai primary key dan auto-increment
+    anak_id = Column(Integer, ForeignKey("anak.id"), nullable=False)  # ID anak yang terkait, mengacu pada tabel anak
+    date = Column(Date, nullable=False)  # Tanggal pengukuran stunting
+    height = Column(DECIMAL(5, 2), nullable=False)  # Tinggi anak dalam format desimal (maksimal 5 digit, 2 desimal)
+    weight = Column(DECIMAL(5, 2), nullable=False)  # Berat anak dalam format desimal (maksimal 5 digit, 2 desimal)
+    created_at = Column(DateTime, default=func.current_timestamp())  # Waktu pembuatan catatan
     updated_at = Column(
-        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()
+        DateTime, default=func.current_timestamp(), onupdate=func.current_timestamp()  # Waktu pembaruan catatan
     )
 
-    anak = relationship("Anak")
+    anak = relationship("Anak")  # Relasi dengan model Anak untuk mendapatkan informasi anak
 
 
 def add_stunting_data(anak_id, date, height, weight):
+    # Fungsi untuk menambahkan data stunting baru
     new_record = Stunting(
-        anak_id=anak_id,
-        date=date,
-        height=height,
-        weight=weight,
+        anak_id=anak_id,  # ID anak yang terkait
+        date=date,  # Tanggal pengukuran
+        height=height,  # Tinggi anak
+        weight=weight,  # Berat anak
     )
-    db.session.add(new_record)
-    db.session.commit()
-    return new_record
+    db.session.add(new_record)  # Menambahkan objek Stunting ke sesi
+    db.session.commit()  # Menyimpan perubahan ke database
+    return new_record  # Mengembalikan objek Stunting yang baru dibuat
 
 
 def update_stunting_data(id, data):
-    stunting_record = db.session.query(Stunting).get(id)
+    # Fungsi untuk memperbarui data stunting berdasarkan ID
+    stunting_record = db.session.query(Stunting).get(id)  # Mencari catatan stunting berdasarkan ID
     if not stunting_record:
-        return None
+        return None  # Mengembalikan None jika catatan tidak ditemukan
 
+    # Memperbarui atribut stunting dengan data baru jika ada
     if "anak_id" in data:
         stunting_record.anak_id = data["anak_id"]
     if "date" in data:
@@ -46,19 +49,5 @@ def update_stunting_data(id, data):
     if "weight" in data:
         stunting_record.weight = data["weight"]
 
-    db.session.commit()
-    return stunting_record
-
-
-def delete_stunting_data(id):
-    stunting_record = db.session.query(Stunting).get(id)
-    if not stunting_record:
-        return False
-
-    db.session.delete(stunting_record)
-    db.session.commit()
-    return True
-
-
-def get_anak_data(anak_id):
-    return db.session.query(Stunting).filter_by(anak_id=anak_id).all()
+    db.session.commit()  # Menyimpan perubahan ke database
+    return stunting_record  # Mengembalikan objek Stunting yang diperbarui
