@@ -91,6 +91,10 @@ python run.py
 - Postman: For API endpoint testing.
 - Katalon: For UI testing and automation.
 
+
+## Dokumentasi API
+ - (Dokumentasi)[https://documenter.getpostman.com/view/32065108/2sAYBRFDs6]
+
 ## Contributing
 - Fork the repository.
 - Create a new branch (git checkout -b feature/your-feature).
