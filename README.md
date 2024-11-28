@@ -3,7 +3,9 @@
 PUSON is an online system for managing and monitoring stunting cases through Posyandu. This project aims to assist Posyandu staff and the public in managing health check data and stunting reports. The application includes features for user management, health check data management, stunting data management, and an integrated helpdesk with a chatbot for support.
 
 ---
+## URL Web
 ### [Puson Web](https://puson.zedis.live)
+### [Figma](https://www.figma.com/design/rJHAh5FmfZh4G8NOUNmbSQ/PUSON?node-id=0-1&t=Gd7YznqsTPuOyQDS-1)
 ---
 
 ## Tech Stack
