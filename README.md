@@ -93,7 +93,7 @@ python run.py
 
 
 ## Dokumentasi API
- - (Dokumentasi)[https://documenter.getpostman.com/view/32065108/2sAYBRFDs6]
+ - [Dokumentasi Puson](https://documenter.getpostman.com/view/32065108/2sAYBRFDs6)
 
 ## Contributing
 - Fork the repository.
