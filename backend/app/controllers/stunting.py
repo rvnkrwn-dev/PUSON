@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
-from ..models.stunting import Stunting
-from flask_jwt_extended import jwt_required
+from ..models import Stunting, Anak
+from sqlalchemy.orm import joinedload
+from ..models.log import add_log
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..middlewares.is_login import is_login
 from ..middlewares.has_access import has_access
 from .. import db
@@ -13,6 +15,9 @@ stunting_bp = Blueprint("stunting_bp", __name__)
 @is_login
 @has_access(['admin_posyandu'])
 def add_stunting_data():
+    # Mengambil ID pengguna dari JWT
+    user_id = get_jwt_identity()
+
     # Mengambil data JSON dari permintaan
     data = request.get_json()
     anak_id = data.get("anak_id")
@@ -34,6 +39,9 @@ def add_stunting_data():
     db.session.add(new_record)  # Menambahkan catatan baru ke sesi
     db.session.commit()  # Menyimpan perubahan ke database
 
+    # Menambahkan log untuk keberhasilan menambahkan data stunting
+    add_log(db.session, user_id, "Berhasil Tambah Data Stunting", f"Stunting untuk anak_id {anak_id} berhasil ditambahkan.")
+
     # Mengembalikan respons dengan detail catatan stunting yang baru dibuat
     return jsonify(
         {
@@ -53,6 +61,9 @@ def add_stunting_data():
 @is_login
 @has_access(['admin_posyandu'])
 def update_stunting_data(id):
+    # Mengambil ID pengguna dari JWT
+    user_id = get_jwt_identity()
+
     # Mengambil data JSON dari permintaan
     data = request.get_json()
     stunting_record = Stunting.query.get(id)  # Mencari catatan stunting berdasarkan ID
@@ -66,6 +77,9 @@ def update_stunting_data(id):
         setattr(stunting_record, key, value)
 
     db.session.commit()  # Menyimpan perubahan ke database
+
+    # Menambahkan log untuk keberhasilan pembaruan data stunting
+    add_log(db.session, user_id, "Berhasil Perbarui Data Stunting", f"Stunting untuk anak_id {stunting_record.anak_id} berhasil diperbarui.")
 
     # Mengembalikan respons dengan detail catatan stunting yang diperbarui
     return jsonify(
@@ -86,6 +100,9 @@ def update_stunting_data(id):
 @is_login
 @has_access(['admin_posyandu'])
 def update_stunting_data_by_anak(anak_id):
+    # Mengambil ID pengguna dari JWT
+    user_id = get_jwt_identity()
+
     # Mengambil data JSON dari permintaan
     data = request.get_json()
     stunting_record = Stunting.query.filter_by(anak_id=anak_id).first()  # Mencari catatan stunting berdasarkan anak_id
@@ -99,6 +116,9 @@ def update_stunting_data_by_anak(anak_id):
         setattr(stunting_record, key, value)
 
     db.session.commit()  # Menyimpan perubahan ke database
+
+    # Menambahkan log untuk keberhasilan pembaruan data stunting
+    add_log(db.session, user_id, "Berhasil Perbarui Data Stunting", f"Stunting untuk anak_id {anak_id} berhasil diperbarui.")
 
     # Mengembalikan respons dengan detail catatan stunting yang diperbarui
     return jsonify(
@@ -119,6 +139,9 @@ def update_stunting_data_by_anak(anak_id):
 @is_login
 @has_access(['admin_posyandu'])
 def delete_stunting_data(id):
+    # Mengambil ID pengguna dari JWT
+    user_id = get_jwt_identity()
+
     # Mencari catatan stunting berdasarkan ID
     stunting_record = Stunting.query.get(id)
 
@@ -129,6 +152,9 @@ def delete_stunting_data(id):
     db.session.delete(stunting_record)  # Menghapus catatan stunting dari sesi
     db.session.commit()  # Menyimpan perubahan ke database
 
+    # Menambahkan log untuk keberhasilan penghapusan data stunting
+    add_log(db.session, user_id, "Berhasil Hapus Data Stunting", f"Stunting dengan id {id} berhasil dihapus.")
+
     # Mengembalikan respons sukses setelah penghapusan
     return jsonify({"message": "Data stunting berhasil dihapus"}), 200
 
@@ -138,6 +164,9 @@ def delete_stunting_data(id):
 @is_login
 @has_access(['admin_posyandu'])
 def delete_stunting_data_by_anak(anak_id):
+    # Mengambil ID pengguna dari JWT
+    user_id = get_jwt_identity()
+
     # Mencari semua catatan stunting berdasarkan anak_id
     stunting_records = Stunting.query.filter_by(anak_id=anak_id).all()
 
@@ -151,6 +180,9 @@ def delete_stunting_data_by_anak(anak_id):
 
     db.session.commit()  # Menyimpan perubahan ke database
 
+    # Menambahkan log untuk keberhasilan penghapusan data stunting
+    add_log(db.session, user_id, "Berhasil Hapus Data Stunting", f"Semua data stunting untuk anak_id {anak_id} berhasil dihapus.")
+
     # Mengembalikan respons sukses setelah penghapusan
     return jsonify({"message": "Data stunting berhasil dihapus"}), 200
 
@@ -160,44 +192,48 @@ def delete_stunting_data_by_anak(anak_id):
 @is_login
 @has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
 def get_data():
-    # Mengambil semua catatan stunting dari database
-    stunting_list = Stunting.query.all()
-    return jsonify(
-        [
-            {
-                "id": stunting.id,
-                "anak_id": stunting.anak_id,
-                "date": stunting.date,
-                "height": stunting.height,
-                "weight": stunting.weight,
-                "created_at": stunting.created_at,
-                "updated_at": stunting.updated_at,
-            }
-            for stunting in stunting_list
-        ]
-    ), 200
+    # Ambil query parameter untuk pagination
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    
+    # Ambil query parameter untuk filter berdasarkan anak_id
+    anak_id = request.args.get("anak_id", None, type=int)
 
+    # Query dasar untuk stunting
+    query = Stunting.query
 
-@stunting_bp.route("/stunting/anak/<int:anak_id>", methods=["GET"])
-@jwt_required()
-@is_login
-@has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
-def get_anak_data(anak_id):
-    # Mencari semua catatan stunting berdasarkan anak_id
-    stunting_list = Stunting.query.filter_by(anak_id=anak_id).all()
+    # Filter berdasarkan anak_id jika diberikan
+    if anak_id:
+        query = query.filter_by(anak_id=anak_id)
+
+    # Pagination
+    stunting_paginated = query.paginate(page=page, per_page=per_page, error_out=False)
+
+    # Mengembalikan respons dengan data stunting dan metadata pagination
     return jsonify(
-        [
-            {
-                "id": stunting.id,
-                "anak_id": stunting.anak_id,
-                "date": stunting.date,
-                "height": stunting.height,
-                "weight": stunting.weight,
-                "created_at": stunting.created_at,
-                "updated_at": stunting.updated_at,
-            }
-            for stunting in stunting_list
-        ]
+        {
+            "data": [
+                {
+                    "id": stunting.id,
+                    "anak_id": stunting.anak_id,
+                    "anak_name": stunting.anak.name,
+                    "date": stunting.date,
+                    "height": stunting.height,
+                    "weight": stunting.weight,
+                    "created_at": stunting.created_at,
+                    "updated_at": stunting.updated_at,
+                }
+                for stunting in stunting_paginated.items
+            ],
+            "pagination": {
+                "total": stunting_paginated.total,
+                "page": stunting_paginated.page,
+                "per_page": stunting_paginated.per_page,
+                "total_pages": stunting_paginated.pages,
+                "has_next_page": stunting_paginated.has_next,
+                "has_previous_page": stunting_paginated.has_prev,
+            },
+        }
     ), 200
 
 

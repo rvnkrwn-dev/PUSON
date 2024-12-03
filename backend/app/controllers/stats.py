@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, request, jsonify
 from ..models.anak import Anak
 from ..models.stunting import Stunting
 from ..models.posyandu import Posyandu
@@ -12,6 +12,7 @@ from ..middlewares.has_access import has_access
 from .. import db
 import pandas as pd
 from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 
 stats_bp = Blueprint('stats_bp', __name__)
 
@@ -128,32 +129,66 @@ def get_total_posyandu():
 @is_login
 @has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
 def get_combined_data():
-    # Mengambil data anak, stunting, dan pemeriksaan dari database
-    anak_data = db.session.query(Anak).all()
-    stunting_data = db.session.query(Stunting).all()
-    pemeriksaan_data = db.session.query(Pemeriksaan).all()
-    
-    # Membuat dictionary untuk menyimpan data stunting dan pemeriksaan berdasarkan anak_id
+    # Mengambil parameter halaman dan ukuran data dari query string
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+
+    # Mengambil data anak dengan paginasi
+    anak_query = db.session.query(Anak)
+    anak_paginated = anak_query.paginate(page=page, per_page=per_page, error_out=False)
+
+    # Mengambil ID anak untuk optimasi query
+    anak_ids = [anak.id for anak in anak_paginated.items]
+    stunting_data = db.session.query(Stunting).filter(Stunting.anak_id.in_(anak_ids)).all()
+    pemeriksaan_data = db.session.query(Pemeriksaan).filter(Pemeriksaan.anak_id.in_(anak_ids)).all()
+
+    # Membuat dictionary untuk memetakan data berdasarkan ID
     stunting_dict = {s.anak_id: s for s in stunting_data}
     pemeriksaan_dict = {p.anak_id: p for p in pemeriksaan_data}
-    
+
+    # Mengambil data Posyandu dan Puskesmas
+    posyandu_data = db.session.query(Posyandu).all()
+    puskesmas_data = db.session.query(Puskesmas).all()
+    posyandu_dict = {pos.id: pos for pos in posyandu_data}
+    puskesmas_dict = {puskesmas.id: puskesmas for puskesmas in puskesmas_data}
+
     combined_data = []
-    for anak in anak_data:
+    for anak in anak_paginated.items:
         stunting = stunting_dict.get(anak.id)
         pemeriksaan = pemeriksaan_dict.get(anak.id)
-        
-        if stunting and pemeriksaan:
-            result_text = "Stunting" if is_stunting(pemeriksaan.result) else "Tidak Stunting"
-            combined_data.append({
-                "nama": anak.name,
-                "gender": anak.gender,
-                "usia": anak.age,
-                "tinggi": str(stunting.height) if stunting else "Data tidak tersedia",
-                "berat": str(stunting.weight) if stunting else "Data tidak tersedia",
-                "hasil": result_text
-            })
-    
-    return jsonify(combined_data)
+        posyandu = posyandu_dict.get(anak.posyandu_id) if anak.posyandu_id else None
+        puskesmas = puskesmas_dict.get(posyandu.puskesmas_id) if posyandu else None
+
+        result_text = "Stunting" if pemeriksaan and is_stunting(pemeriksaan.result) else "Tidak Stunting"
+        combined_data.append({
+            "nama": anak.name,
+            "gender": anak.gender,
+            "usia": anak.age,
+            "tinggi": str(stunting.height) if stunting else "Data tidak tersedia",
+            "berat": str(stunting.weight) if stunting else "Data tidak tersedia",
+            "hasil": result_text,
+            "posyandu": {
+                "id": posyandu.id if posyandu else None,
+                "name": posyandu.name if posyandu else "Tidak terdaftar"
+            },
+            "puskesmas": {
+                "id": puskesmas.id if puskesmas else None,
+                "name": puskesmas.name if puskesmas else "Tidak terdaftar"
+            }
+        })
+
+    # Menyusun respons dengan metadata pagination
+    return jsonify({
+        "data": combined_data,
+        "pagination": {
+            "total": anak_paginated.total,
+            "page": anak_paginated.page,
+            "per_page": anak_paginated.per_page,
+            "total_pages": anak_paginated.pages,
+            "has_next_page": anak_paginated.has_next,
+            "has_previous_page": anak_paginated.has_prev
+        }
+    }), 200
 
 
 @stats_bp.route('/stats/grafik-anak', methods=['GET'])

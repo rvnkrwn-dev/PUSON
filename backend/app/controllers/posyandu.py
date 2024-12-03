@@ -1,8 +1,10 @@
 from flask import Blueprint, request, jsonify
-from ..models.posyandu import Posyandu
-from flask_jwt_extended import jwt_required
+from ..models import Posyandu, Puskesmas
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..middlewares.is_login import is_login
+from ..models.log import add_log
 from ..middlewares.has_access import has_access
+from sqlalchemy.orm import joinedload
 from .. import db
 
 posyandu_bp = Blueprint("posyandu_bp", __name__)
@@ -31,6 +33,10 @@ def create_posyandu():
     db.session.add(new_posyandu)  # Menambahkan objek baru ke sesi
     db.session.commit()  # Menyimpan perubahan ke database
 
+    # Menambahkan log untuk keberhasilan pembuatan posyandu
+    user_id = get_jwt_identity()
+    add_log(db.session, user_id, "Berhasil Buat Posyandu", f"Posyandu baru dengan nama {new_posyandu.name} berhasil dibuat.")
+
     # Mengembalikan respons dengan detail posyandu yang baru dibuat
     return jsonify(
         {
@@ -58,11 +64,18 @@ def update_posyandu(id):
     if not posyandu:
         return jsonify({"error": "Posyandu tidak ditemukan"}), 404
 
+    # Menyimpan nama posyandu lama sebelum diperbarui
+    old_name = posyandu.name
+
     # Memperbarui atribut posyandu dengan data baru
     for key, value in data.items():
         setattr(posyandu, key, value)
 
     db.session.commit()  # Menyimpan perubahan ke database
+
+    # Menambahkan log untuk keberhasilan pembaruan posyandu
+    user_id = get_jwt_identity()
+    add_log(db.session, user_id, "Berhasil Perbarui Posyandu", f"Posyandu ID {id} ({old_name}) berhasil diperbarui menjadi {posyandu.name}.")
 
     # Mengembalikan respons dengan detail posyandu yang diperbarui
     return jsonify(
@@ -93,6 +106,10 @@ def delete_posyandu(id):
     db.session.delete(posyandu)  # Menghapus posyandu dari sesi
     db.session.commit()  # Menyimpan perubahan ke database
 
+    # Menambahkan log untuk keberhasilan penghapusan posyandu
+    user_id = get_jwt_identity()
+    add_log(db.session, user_id, "Berhasil Hapus Posyandu", f"Posyandu ID {id} dengan nama {posyandu.name} berhasil dihapus.")
+
     # Mengembalikan respons sukses setelah penghapusan
     return jsonify({"message": "Posyandu berhasil dihapus"}), 200
 
@@ -102,22 +119,39 @@ def delete_posyandu(id):
 @is_login
 @has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
 def get_posyandu_list():
-    # Mengambil semua posyandu dari database
-    posyandu_list = Posyandu.query.all()
-    return jsonify(
-        [
-            {
-                "id": posyandu.id,
-                "puskesmas_id": posyandu.puskesmas_id,
-                "name": posyandu.name,
-                "address": posyandu.address,
-                "phone": posyandu.phone,
-                "created_at": posyandu.created_at,
-                "updated_at": posyandu.updated_at,
-            }
-            for posyandu in posyandu_list
-        ]
-    ), 200
+    # Mendapatkan parameter `page` dan `per_page` dari query string
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    
+    # Query posyandu dengan pagination
+    posyandu_pagination = Posyandu.query.paginate(page=page, per_page=per_page, error_out=False)
+
+    # Hasil data dalam format JSON
+    posyandu_data = [
+        {
+            "id": posyandu.id,
+            "puskesmas_id": posyandu.puskesmas_id,
+            "name": posyandu.name,
+            "address": posyandu.address,
+            "phone": posyandu.phone,
+            "created_at": posyandu.created_at,
+            "updated_at": posyandu.updated_at,
+        }
+        for posyandu in posyandu_pagination.items
+    ]
+
+    # Mengembalikan respons JSON
+    return jsonify({
+        "data": posyandu_data,
+        "meta": {
+            "current_page": posyandu_pagination.page,
+            "per_page": posyandu_pagination.per_page,
+            "total_items": posyandu_pagination.total,
+            "total_pages": posyandu_pagination.pages,
+            "has_next_page": posyandu_pagination.has_next,
+            "has_previous_page": posyandu_pagination.has_prev,
+        }
+    }), 200
 
 
 @posyandu_bp.route("/posyandu/<int:id>", methods=["GET"])

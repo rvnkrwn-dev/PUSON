@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models.user import User, createUser, updateUser, deleteUser
+from ..middlewares.is_login import is_login
 from ..middlewares.has_access import has_access
 from ..models.refresh_token import RefreshToken
-from ..models.log import Log, delete_log
+from ..models.log import Log, delete_log, add_log
 from .. import db
 
 users_bp = Blueprint("users_bp", __name__)
@@ -26,6 +27,11 @@ def create_user():
     try:
         # Membuat pengguna baru
         user = createUser(full_name, email, password, role)
+
+        # Menambahkan log keberhasilan pembuatan pengguna
+        user_id = get_jwt_identity()
+        add_log(db.session, user_id, "Berhasil Buat Pengguna", f"Pengguna baru dibuat dengan nama {user.full_name}.")
+
         return jsonify(
             {
                 "message": "Pengguna berhasil dibuat",
@@ -41,27 +47,7 @@ def create_user():
         return jsonify({"message": f"Kesalahan saat membuat pengguna: {str(e)}"}), 500
 
 
-@users_bp.route("/users/<int:user_id>", methods=["GET"])
-@jwt_required()
-@has_access(["super_admin", "admin_puskesmas", "admin_posyandu", "user"])
-def get_user(user_id):
-    # Mendapatkan ID pengguna dari token JWT
-    current_user_id = get_jwt_identity()
-    user = User.query.get(user_id)  # Mencari pengguna berdasarkan ID
-    if user:
-        return jsonify(
-            {
-                "id": user.id,
-                "full_name": user.full_name,
-                "email": user.email,
-                "role": user.role,
-            }
-        ), 200
-    return jsonify({"message": "Pengguna tidak ditemukan"}), 404
-
-
 @users_bp.route("/users/<int:user_id>", methods=["PUT", "OPTIONS"])
-@jwt_required()
 @has_access(["super_admin", "admin_puskesmas", "admin_posyandu"])
 def update_user(user_id):
     # Mengambil data JSON dari permintaan
@@ -71,6 +57,10 @@ def update_user(user_id):
         # Memperbarui pengguna dengan data baru
         updated_user = updateUser(user_id, data)
         if updated_user:
+            # Menambahkan log keberhasilan pembaruan pengguna
+            user_id = get_jwt_identity()
+            add_log(db.session, user_id, "Berhasil Perbarui Pengguna", f"Pengguna ID {user_id} berhasil diperbarui.")
+
             return jsonify(
                 {
                     "message": "Pengguna berhasil diperbarui",
@@ -87,7 +77,6 @@ def update_user(user_id):
 
 
 @users_bp.route("/users/<int:user_id>", methods=["DELETE"])
-@jwt_required()
 @has_access(["super_admin"])
 def delete_user(user_id):
     # Mencari pengguna berdasarkan ID
@@ -105,6 +94,10 @@ def delete_user(user_id):
 
             # Menghapus pengguna
             if deleteUser(user_id):
+                # Menambahkan log keberhasilan penghapusan pengguna
+                user_id = get_jwt_identity()
+                add_log(db.session, user_id, "Berhasil Hapus Pengguna", f"Pengguna ID {user_id} berhasil dihapus.")
+
                 return jsonify({"message": "Pengguna, token terkait, dan log berhasil dihapus"}), 200
             else:
                 return jsonify({"message": "Gagal untuk menghapus pengguna"}), 400
@@ -116,7 +109,7 @@ def delete_user(user_id):
 
 @users_bp.route("/users", methods=["GET"])
 @jwt_required()
-@has_access(["super_admin"])
+@has_access(["super_admin", "admin_puskesmas", "admin_posyandu"])
 def get_users():
     # Mengambil semua pengguna dari database
     users = User.query.all()
@@ -130,3 +123,23 @@ def get_users():
         for user in users
     ]
     return jsonify({"data": users_list}), 200
+
+
+@users_bp.route("/users/<int:user_id>", methods=["GET"])
+@jwt_required()
+@has_access(["super_admin", "admin_puskesmas", "admin_posyandu"])
+def get_user(user_id):
+    # Mendapatkan ID pengguna dari token JWT
+    current_user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if user:
+        return jsonify(
+            {
+                "id": user.id,
+                "full_name": user.full_name,
+                "email": user.email,
+                "role": user.role,
+            }
+        ), 200
+    return jsonify({"message": "Pengguna tidak ditemukan"}), 404
+

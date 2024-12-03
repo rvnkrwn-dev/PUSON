@@ -21,6 +21,10 @@ def register():
     if not all([full_name, email, password, role]):
         return jsonify({"message": "Data tidak lengkap"}), 400
 
+    # Memeriksa apakah password memiliki panjang minimal 8 karakter
+    if len(password) < 8:
+        return jsonify({"message": "Password harus memiliki minimal 8 karakter"}), 400
+
     # Memeriksa apakah email sudah terdaftar
     if User.query.filter_by(email=email).first():
         return jsonify({"message": "Email sudah terdaftar"}), 400
@@ -30,7 +34,7 @@ def register():
         new_user = createUser(
             full_name=full_name, email=email, password=password, role=role
         )
-        
+
         # Mengirim email selamat datang
         send_email(
             "Selamat Datang di Puson!",

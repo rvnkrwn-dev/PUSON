@@ -12,6 +12,8 @@ from .anak import anak_bp
 from .pemeriksaan import pemeriksaan_bp
 from .stunting import stunting_bp
 from .stats import stats_bp
+from .log import log_bp
+from .search import search_bp
 
 
 def init_auth_blueprints(app):
@@ -29,3 +31,5 @@ def init_auth_blueprints(app):
     app.register_blueprint(pemeriksaan_bp, url_prefix="/auth")
     app.register_blueprint(stunting_bp, url_prefix="/auth")
     app.register_blueprint(stats_bp, url_prefix="/auth")
+    app.register_blueprint(log_bp, url_prefix="/auth")
+    app.register_blueprint(search_bp, url_prefix="/auth")

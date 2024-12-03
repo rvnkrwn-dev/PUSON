@@ -2,10 +2,11 @@ from flask import Blueprint, jsonify, request
 from ..models.user import User, updateUser
 from ..services.email_helper import send_email
 from datetime import datetime, timedelta
+from ..models.log import add_log
 import secrets
+from .. import db
 
 forget_password_bp = Blueprint("password_reset", __name__)
-
 
 @forget_password_bp.route("/forget-password", methods=["POST"])
 def forget_password():
@@ -45,4 +46,7 @@ def forget_password():
         email,
     )
 
+    # Menambahkan log untuk aktivitas lupa sandi
+    add_log(db.session, user.id, "Kirim URL Reset Kata Sandi", f"Berhasil membuat URL reset kata sandi untuk email {email} dan mengirimkan email.")
+    
     return jsonify({"message": "Email reset kata sandi telah dikirim"}), 200
