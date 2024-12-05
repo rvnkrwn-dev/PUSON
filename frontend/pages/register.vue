@@ -140,7 +140,6 @@ const handleRegister = async () => {
             full_name: fullName.value,
             email: email.value,
             password: password.value,
-            role: "user",
           },
         }
     );
