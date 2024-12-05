@@ -146,7 +146,7 @@ const fetchAnak = async () => {
     isLoading.value = true; // Menandakan proses sedang berlangsung
     await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
     const response = await useFetchApi(`${apiUrl}/auth/anak`); // Mengambil data anak
-    dataAnak.value = response ?? []; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
+    dataAnak.value = response?.data; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
   } catch (err) {
     // Menampilkan alert error jika terjadi kesalahan saat mengambil data
     await Swal.fire({

@@ -8,25 +8,25 @@ export default () => {
     const useAuthLoading = () => useState('auth_loading', () => true)
     const isLoggedIn = () => useCookie('isLoggedIn')
 
-    const setToken = (newToken) => {
+    const setToken = (newToken: string) => {
         const authToken = useAuthToken()
         authToken.value = newToken
     }
 
-    const setUser = (newUser) => {
+    const setUser = (newUser: string) => {
         const authUser = useAuthUser()
         authUser.value = newUser
     }
 
-    const setIsAuthLoading = (value) => {
+    const setIsAuthLoading = (value: boolean) => {
         const authLoading = useAuthLoading()
-        authLoading.value = value
+        authLoading.value = String(value) as string
     }
 
-    const login = ({ email, password }) => {
+    const login = ({ email, password }: {email: string, password: string}) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const data = await useFetchApi(`${apiUrl}/auth/login`, {
+                const data: any = await useFetchApi(`${apiUrl}/auth/login`, {
                     method: 'POST',
                     body: {
                         email,
@@ -34,8 +34,8 @@ export default () => {
                     }
                 })
 
-                setToken(data.access_token)
-                setUser(data.user)
+                setToken(data?.access_token)
+                setUser(data?.user)
                 isLoggedIn().value = true
                 resolve(true)
             } catch (error) {

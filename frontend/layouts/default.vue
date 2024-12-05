@@ -1,7 +1,9 @@
 <template>
   <AppHeader/>
   <AppSidebar/>
-  <slot />
+  <div class="bg-gray-50 min-h-screen overflow-y-scroll overflow-x-hidden">
+    <slot/>
+  </div>
 </template>
 
 <script setup lang="ts">

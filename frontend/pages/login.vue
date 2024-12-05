@@ -31,9 +31,24 @@
                     </NuxtLink>
                   </div>
                   <div class="relative">
-                    <input v-model="password" type="password" id="password" name="password"
-                           class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                           required aria-describedby="password-error" :class="{'border-red-500': passwordError}">
+                    <input
+                        v-model="password"
+                        :type="showPassword ? 'text' : 'password'"
+                        id="password"
+                        name="password"
+                        class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                        required
+                        aria-describedby="password-error"
+                        :class="{'border-red-500': passwordError}"
+                    >
+                    <button
+                        type="button"
+                        class="absolute inset-y-0 right-0 flex items-center px-3 focus:outline-none"
+                        @click="togglePasswordVisibility"
+                    >
+                      <span v-if="showPassword">Hide</span>
+                      <span v-else>Show</span>
+                    </button>
                   </div>
                 </div>
 

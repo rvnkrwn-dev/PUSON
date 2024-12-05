@@ -146,7 +146,7 @@ const fetchPosyandu = async () => {
     isLoading.value = true; // Menandakan proses sedang berlangsung
     await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
     const response = await useFetchApi(`${apiUrl}/auth/posyandu`); // Mengambil data posyandu
-    dataPosyandu.value = response ?? []; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
+    dataPosyandu.value = response?.data; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
   } catch (err) {
     // Menampilkan alert error jika terjadi kesalahan saat mengambil data
     await Swal.fire({

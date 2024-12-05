@@ -147,7 +147,7 @@ const fetchPuskesmas = async () => {
     isLoading.value = true; // Menandakan proses sedang berlangsung
     await sleep(2000) // Menunggu beberapa detik untuk simulasi loading
     const response = await useFetchApi(`${apiUrl}/auth/puskesmas`); // Mengambil data puskesmas
-    dataPuskesmas.value = response ?? []; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
+    dataPuskesmas.value = response?.data; // Menyimpan data yang berhasil diambil, jika tidak ada data kosongkan array
   } catch (err) {
     // Menampilkan alert error jika terjadi kesalahan saat mengambil data
     await Swal.fire({
